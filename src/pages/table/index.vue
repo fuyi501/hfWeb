@@ -79,6 +79,7 @@
 
 <script>
 import axios from 'axios'
+const uploadTableUrl = 'http://192.168.9.15:8360/index/savetable'
 export default {
   data () {
     var checkPhone = (rule, value, callback) => {
@@ -199,7 +200,7 @@ export default {
           } else if (this.header.length === 6) {
             tableType = 'schedule'
           }
-          axios.post('http://127.0.0.1:8360/index/savetable', {
+          axios.post(uploadTableUrl, {
             tableInfo: this.table.data,
             tableType: tableType
           })

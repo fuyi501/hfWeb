@@ -53,6 +53,7 @@
 
 <script>
 import axios from 'axios'
+const uploadImgUrl = 'http://192.168.9.15:8360/index/img'
 export default {
   data () {
     return {
@@ -94,7 +95,7 @@ export default {
     imgUpload () {
       for (let i in this.fileList2) {
         if (this.fileList2[i].status === 'ready') {
-          axios.post('http://127.0.0.1:8360/index/img', {
+          axios.post(uploadImgUrl, {
             imgInfo: this.fileList2[i]
           })
             .then((res) => {

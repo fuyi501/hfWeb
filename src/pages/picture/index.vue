@@ -5,7 +5,7 @@
       <el-upload
         class="upload-demo"
         ref="upload"
-        action="http://127.0.0.1:8360/index/saveimg"
+        :action="uploadUrl"
         :show-file-list="true"
         :data="userInfo"
         name='avatar'
@@ -35,6 +35,7 @@
 export default {
   data () {
     return {
+      uploadUrl: 'http://192.168.9.15:8360/index/saveimg',
       imageUrl: '',
       fileList2: [],
       userInfo: { uid: 12345 }
@@ -90,11 +91,12 @@ export default {
       console.log('remove: ', file, this.fileList2)
     },
     submitUpload () {
-      if (this.fileList2.length > 0) {
-        this.$refs.upload.submit()
-      } else {
-        this.$message.error('请先选择照片')
-      }
+      this.$refs.upload.submit()
+      // if (this.fileList2.length > 0) {
+      //   this.$refs.upload.submit()
+      // } else {
+      //   this.$message.error('请先选择照片')
+      // }
     },
     beforeAvatarUpload (file) {
       const isJPG = file.type === 'image/jpeg'

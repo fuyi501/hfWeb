@@ -5,7 +5,7 @@
       <el-upload
         class="upload-demo"
         ref="upload"
-        action="http://127.0.0.1:8360/index/saveimg"
+        action="http://192.168.9.15:8360/index/saveimg"
         :show-file-list="true"
         :data= 'userInfo'
         name='avatar'
@@ -47,8 +47,6 @@
 </template>
 
 <script>
-import lrz from 'lrz'
-
 export default {
   data () {
     return {
@@ -159,19 +157,6 @@ export default {
     },
     error (error) {
       console.log(`访问用户媒体设备失败${error.name}, ${error.message}`)
-    },
-    compress () {
-      lrz('./xxx/xx/x.png')
-        .then((rst) => {
-          // 处理成功会执行
-          console.log(rst)
-        }).catch((err) => {
-          // 处理失败会执行
-          console.log(err)
-        }).always(() => {
-          // 不管是成功失败，都会执行
-          console.log('执行')
-        })
     },
     // 将base64转换为文件对象
     convertBase64ToBlob (base64) {
