@@ -53,7 +53,7 @@
 
 <script>
 import axios from 'axios'
-const uploadImgUrl = 'http://192.168.9.15:8360/index/img'
+const uploadImgUrl = 'https://192.168.9.15:8360/index/img'
 export default {
   data () {
     return {
