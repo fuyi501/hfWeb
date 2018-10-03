@@ -1,14 +1,23 @@
 // 菜单 侧边栏
 export default [
   { path: '/index', title: '首页', icon: 'home' },
-  { path: '/table', title: '表格处理', icon: 'table' },
+  { path: '/table2', title: '上传表格', icon: 'table' },
   {
-    title: '照片上传',
-    icon: 'folder-o',
+    title: '采集照片',
+    icon: 'file-image-o',
     children: [
-      { path: '/picture', title: '照片上传', icon: 'picture-o' },
+      { path: '/picture', title: '上传照片', icon: 'picture-o' },
       { path: '/photo', title: '摄像头拍照', icon: 'camera' }
     ]
   },
-  { path: '/face', title: '测试', icon: 'folder-o' }
+  { path: '/staff', title: '员工管理', icon: 'user-circle' },
+  { path: '/sche', title: '排班表', icon: 'bars' },
+  {
+    title: '测试',
+    icon: 'folder-o',
+    children: [
+      { path: '/face', title: '上传图片', icon: 'folder-o' },
+      { path: '/table', title: '上传表格', icon: 'table' }
+    ]
+  }
 ]

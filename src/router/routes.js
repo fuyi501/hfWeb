@@ -22,7 +22,13 @@ const frameIn = [
         path: '/table',
         name: 'table',
         component: () => import('@/pages/table'),
-        meta: { meta, title: '表格处理' }
+        meta: { meta, title: '上传表格' }
+      },
+      {
+        path: '/table2',
+        name: 'table2',
+        component: () => import('@/pages/table2'),
+        meta: { meta, title: '上传表格' }
       },
       {
         path: '/face',
@@ -41,6 +47,18 @@ const frameIn = [
         name: 'photo',
         component: () => import('@/pages/photo'),
         meta: { meta, title: '摄像头拍照' }
+      },
+      {
+        path: '/staff',
+        name: 'staff',
+        component: () => import('@/pages/staff'),
+        meta: { meta, title: '员工管理' }
+      },
+      {
+        path: '/sche',
+        name: 'sche',
+        component: () => import('@/pages/sche'),
+        meta: { meta, title: '排班表' }
       }
     ]
   }

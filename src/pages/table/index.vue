@@ -206,9 +206,15 @@ export default {
           })
             .then((res) => {
               console.log(res)
-              if (res.status === 200) {
+              if (res.data.code === 2000) {
                 this.$notify({
                   title: '上传成功',
+                  type: 'success'
+                })
+              } else {
+                this.$notify({
+                  title: '上传失败',
+                  message: res.data.desc,
                   type: 'success'
                 })
               }
