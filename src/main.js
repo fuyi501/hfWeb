@@ -20,11 +20,11 @@ import menuHeader from '@/menu/header'
 import menuAside from '@/menu/aside'
 import { frameInRoutes } from '@/router/routes'
 
-import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-chalk/index.css'
+// import ElementUI from 'element-ui'
+// import 'element-ui/lib/theme-chalk/index.css'
 import D2Crud from '@d2-projects/d2-crud'
 
-Vue.use(ElementUI)
+// Vue.use(ElementUI)
 Vue.use(D2Crud)
 
 // 核心插件
