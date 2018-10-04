@@ -347,6 +347,7 @@ export default {
             })
             this.data = results
             this.rowHandle = this.rowHandleTemp
+            console.log('有数据', this.data.length, this.columns)
             this.$notify({
               title: '导入成功',
               type: 'success'

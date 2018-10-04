@@ -25,7 +25,11 @@
           <d2-icon name="upload"/>
           上传到服务器
         </el-button>
-        <div slot="tip" class="el-upload__tip">只能上传 jpg/png 文件</div>
+        <div slot="tip" class="el-upload__tip" style="font-size:14px">只能上传
+          <span style="color: red;">jpg</span>
+          文件，jpg 文件请以：
+          <span style="color: red;">工号_姓名.jpg</span> 格式添加上传。
+        </div>
       </el-upload>
     </div>
   </d2-container>

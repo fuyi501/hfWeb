@@ -16,7 +16,7 @@
         flex-box="0">
         <div class="logo-group" :style="{width: asideCollapse ? asideWidthCollapse : asideWidth}">
           <img v-if="asideCollapse" :src="`${$baseUrl}image/theme/${themeActiveSetting.name}/logo/icon-only.png`">
-          <img v-else :src="`${$baseUrl}image/theme/${themeActiveSetting.name}/logo/all.png`">
+          <img v-else :src="`${$baseUrl}image/theme/${themeActiveSetting.name}/logo/all.png`" style="height: 45px; margin-top: 5px;">
         </div>
         <div class="toggle-aside-btn" @click="handleToggleAside">
           <d2-icon name="bars"/>

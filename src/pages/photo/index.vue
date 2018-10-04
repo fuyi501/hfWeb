@@ -8,10 +8,11 @@
         <d2-icon name="camera"/>
         摄像头拍照
       </el-button>
-      <el-button style="margin-left: 10px;" type="success" @click="submitUpload">
+      <el-button style="margin-left: 10px; margin-bottom: 10px;" type="success" @click="submitUpload">
         <d2-icon name="upload"/>
         上传到服务器
-      </el-button>
+      </el-button><br/>
+      <span style="font-size: 14px;"> 请拍摄清楚人脸照片，人脸处于照片中间，便于识别。 </span>
       <el-upload
         class="upload-demo"
         ref="upload"
@@ -39,9 +40,16 @@
             <canvas id="canvas" width="320" height="320"></canvas>
           </el-col>
         </el-row>
-        <el-input v-model="name" placeholder="请输入用户姓名" style="text-align:center">
-          <template slot="append">.png</template>
-        </el-input>
+        <el-form :inline="true" :model="imgInfo" :rules="rules" ref="imgInfo" class="demo-form-inline">
+          <el-form-item label="工号" prop="staff_id" style="margin-left:50px;">
+            <el-input v-model="imgInfo.staff_id" placeholder="请输入用户工号"></el-input>
+          </el-form-item>
+          <el-form-item label="用户姓名" prop="name" style="margin-left:50px;">
+            <el-input v-model="imgInfo.name" placeholder="请输入用户姓名">
+              <!-- <template slot="append">.jpg</template> -->
+            </el-input>
+          </el-form-item>
+        </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="takePhoto">拍照</el-button>
           <el-button type="primary" @click="confirmPhoto">确认</el-button>
@@ -62,7 +70,18 @@ export default {
       context: '',
       imageUrl: '',
       fileList2: [],
-      name: '',
+      imgInfo: {
+        staff_id: '',
+        name: ''
+      },
+      rules: {
+        staff_id: [
+          { required: true, message: '请输入工号', trigger: 'blur' }
+        ],
+        name: [
+          { required: true, message: '请输入用户姓名', trigger: 'blur' }
+        ]
+      },
       cameraDialogVisible: false
     }
   },
@@ -138,13 +157,16 @@ export default {
       console.log('打开了')
       setTimeout(() => {
         this.video = document.getElementById('video')
-        this.canvas = document.getElementById('canvas')
-        this.context = this.canvas.getContext('2d')
         if (navigator.mediaDevices.getUserMedia || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
           // 调用用户媒体设备, 访问摄像头
           this.getUserMedia({ video: { width: 320, height: 320 } }, this.success, this.error)
         } else {
-          alert('不支持访问用户媒体')
+          this.$alert('不支持访问用户媒体', '提示', {
+            confirmButtonText: '确定',
+            type: 'warning',
+            callback: action => {
+            }
+          })
         }
       }, 100)
     },
@@ -152,20 +174,37 @@ export default {
       this.cameraDialogVisible = true
     },
     takePhoto () {
+      this.canvas = document.getElementById('canvas')
+      this.context = this.canvas.getContext('2d')
       this.context.drawImage(this.video, 0, 0, 320, 320)
     },
     confirmPhoto () {
-      if (this.name === '') {
-        this.$alert('请输入用户姓名', '提示', {
+      if (this.canvas === '') {
+        this.$alert('请先进行拍照', '提示', {
           confirmButtonText: '确定',
+          type: 'warning',
+          callback: action => {
+          }
+        })
+      } else if (this.imgInfo.staff_id === '') {
+        this.$alert('请输入工号', '提示', {
+          confirmButtonText: '确定',
+          type: 'warning',
+          callback: action => {
+          }
+        })
+      } else if (this.imgInfo.name === '') {
+        this.$alert('请输入姓名', '提示', {
+          confirmButtonText: '确定',
+          type: 'warning',
           callback: action => {
           }
         })
       } else {
-        let src = this.canvas.toDataURL('image/png')
+        let src = this.canvas.toDataURL('image/jpeg')
         this.fileList2.push({
           status: 'ready',
-          name: this.name + '.png',
+          name: this.imgInfo.staff_id + '_' + this.imgInfo.name + '.jpg',
           url: src
         })
         this.cameraDialogVisible = false
