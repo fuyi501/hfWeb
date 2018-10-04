@@ -39,6 +39,7 @@
 
 <script>
 import axios from 'axios'
+import dayjs from 'dayjs'
 const uploadTableUrl = 'https://192.168.9.15:8360/index/savetable'
 
 export default {
@@ -292,9 +293,21 @@ export default {
         saveLoading: false
       },
       formRules: {
-        telephone: [
-          { pattern: /^1[34578]\d{9}$/, message: '手机号码输入错误' }
-        ]
+        // 员工表
+        staff_id: [ { required: true, message: '请输入工号', trigger: 'blur' } ],
+        name: [ { required: true, message: '请输入姓名', trigger: 'blur' } ],
+        gender: [ { required: true, message: '请选择性别', trigger: 'blur' } ],
+        department: [ { required: true, message: '请选择部门', trigger: 'blur' } ],
+        team: [ { required: true, message: '请选择班次', trigger: 'blur' } ],
+        workshop: [ { required: true, message: '请选择车间', trigger: 'blur' } ],
+        post: [ { required: true, message: '请选择职位', trigger: 'blur' } ],
+        telephone: [ { pattern: /^1[34578]\d{9}$/, message: '手机号码输入错误' } ],
+        working_state: [ { required: true, message: '请工作类型', trigger: 'blur' } ],
+        // 排班表
+        t_id: [ { required: true, message: '请输入id号', trigger: 'blur' } ],
+        date: [ { required: true, message: '请选择日期', trigger: 'blur' } ],
+        begin_time: [ { required: true, message: '请选择开始时间', trigger: 'blur' } ],
+        end_time: [ { required: true, message: '请选择结束时间', trigger: 'blur' } ]
       },
       options: {
         rowClassName ({ row, rowIndex }) {
@@ -338,7 +351,7 @@ export default {
               title: '导入成功',
               type: 'success'
             })
-          }, 300)
+          }, 600)
         })
       return false
     },
@@ -364,8 +377,7 @@ export default {
         this.$confirm('确认要上传？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          type: 'warning',
-          center: true
+          type: 'warning'
         }).then(() => {
           let tableType = ''
           if (this.header.length === 10) {
@@ -373,6 +385,7 @@ export default {
           } else if (this.header.length === 6) {
             tableType = 'schedule'
           }
+          console.log('this.data: ', this.data, tableType)
           axios.post(uploadTableUrl, {
             tableInfo: this.data,
             tableType: tableType
@@ -404,6 +417,11 @@ export default {
       this.formOptions.saveLoading = true
       setTimeout(() => {
         console.log(row)
+        if (this.header.length === 6) {
+          row.date = dayjs(row.date).format('YYYY-MM-DD')
+        }
+        this.data.push(row)
+        console.log('add this.data: ', this.data)
         this.$message({
           message: '保存成功',
           type: 'success'
@@ -417,6 +435,11 @@ export default {
       setTimeout(() => {
         console.log(index)
         console.log(row)
+        if (this.header.length === 6) {
+          row.date = dayjs(row.date).format('YYYY-MM-DD')
+        }
+        this.data.splice(index, 1, row)
+        console.log('edit this.data: ', this.data)
         this.$message({
           message: '编辑成功',
           type: 'success'
@@ -429,6 +452,8 @@ export default {
       setTimeout(() => {
         console.log(index)
         console.log(row)
+        this.data.splice(index, 1)
+        console.log('remove this.data: ', this.data)
         this.$message({
           message: '删除成功',
           type: 'success'
@@ -449,10 +474,10 @@ export default {
 
 <style>
 .el-table .warning-row {
-  background: oldlace;
+  /* background: oldlace; */
 }
 
 .el-table .success-row {
-  background: #f0f9eb;
+  /* background: #f0f9eb; */
 }
 </style>

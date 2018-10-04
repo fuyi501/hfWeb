@@ -7,6 +7,7 @@
       add-mode
       :add-button="addButton"
       :pagination="pagination"
+      :form-rules="formRules"
       :rowHandle="rowHandle"
       :form-template="formTemplate"
       :form-options="formOptions"
@@ -174,6 +175,14 @@ export default {
         labelWidth: '80px',
         labelPosition: 'left',
         saveLoading: false
+      },
+      formRules: {
+        // 排班表
+        t_id: [ { required: true, message: '请输入id号', trigger: 'blur' } ],
+        date: [ { required: true, message: '请选择日期', trigger: 'blur' } ],
+        team: [ { required: true, message: '请选择班次', trigger: 'blur' } ],
+        begin_time: [ { required: true, message: '请选择开始时间', trigger: 'blur' } ],
+        end_time: [ { required: true, message: '请选择结束时间', trigger: 'blur' } ]
       }
     }
   },

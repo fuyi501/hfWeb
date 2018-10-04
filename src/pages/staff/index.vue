@@ -290,10 +290,17 @@ export default {
         saveLoading: false
       },
       formRules: {
-        telephone: [
-          // { required: true, message: '请输入日期', trigger: 'blur' },
-          { pattern: /^1[34578]\d{9}$/, message: '手机号码输入错误' }
-        ]
+        // 员工表
+        staff_id: [ { required: true, message: '请输入工号', trigger: 'blur' },
+          { pattern: /^\d+$/, message: '只能输入数字' } ],
+        name: [ { required: true, message: '请输入姓名', trigger: 'blur' } ],
+        gender: [ { required: true, message: '请选择性别', trigger: 'blur' } ],
+        department: [ { required: true, message: '请选择部门', trigger: 'blur' } ],
+        team: [ { required: true, message: '请选择班次', trigger: 'blur' } ],
+        workshop: [ { required: true, message: '请选择车间', trigger: 'blur' } ],
+        post: [ { required: true, message: '请选择职位', trigger: 'blur' } ],
+        telephone: [ { pattern: /^1[34578]\d{9}$/, message: '手机号码输入错误' } ],
+        working_state: [ { required: true, message: '请工作类型', trigger: 'blur' } ]
       },
       options: {
         rowClassName ({ row, rowIndex }) {
@@ -474,10 +481,10 @@ export default {
 
 <style>
 .el-table .warning-row {
-  background: oldlace;
+  /* background: oldlace; */
 }
 
 .el-table .success-row {
-  background: #f0f9eb;
+  /* background: #f0f9eb; */
 }
 </style>
