@@ -161,7 +161,7 @@ export default {
           // 调用用户媒体设备, 访问摄像头
           this.getUserMedia({ video: { width: 320, height: 320 } }, this.success, this.error)
         } else {
-          this.$alert('不支持访问用户媒体', '提示', {
+          this.$alert('该浏览器不支持访问用户媒体设备', '提示', {
             confirmButtonText: '确定',
             type: 'warning',
             callback: action => {
@@ -236,6 +236,24 @@ export default {
       this.video.play()
     },
     error (error) {
+      console.log(error)
+      if (error.name === 'NotFoundError') {
+        this.$alert('没有找到摄像头设备，请检查是否有摄像头', '提示', {
+          confirmButtonText: '确定',
+          type: 'warning',
+          callback: action => {
+            this.cameraDialogVisible = false
+          }
+        })
+      } else {
+        this.$alert(`访问用户媒体设备失败：${error.name}，${error.message}`, '提示', {
+          confirmButtonText: '确定',
+          type: 'warning',
+          callback: action => {
+            this.cameraDialogVisible = false
+          }
+        })
+      }
       console.log(`访问用户媒体设备失败${error.name}, ${error.message}`)
     }
   }
