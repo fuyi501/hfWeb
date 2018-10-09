@@ -11,6 +11,10 @@
       <el-button style="margin-left: 10px; margin-bottom: 10px;" type="success" @click="submitUpload">
         <d2-icon name="upload"/>
         上传到服务器
+      </el-button>
+      <el-button style="margin-left: 10px; margin-bottom: 10px;" type="danger" @click="updateFace">
+        <d2-icon name="smile-o"/>
+        更新人脸库
       </el-button><br/>
       <span style="font-size: 14px;"> 请拍摄清楚人脸照片，人脸处于照片中间，便于识别。 </span>
       <el-upload
@@ -41,18 +45,28 @@
           </el-col>
         </el-row>
         <el-form :inline="true" :model="imgInfo" :rules="rules" ref="imgInfo" class="demo-form-inline">
-          <el-form-item label="工号" prop="staff_id" style="margin-left:50px;">
+          <el-form-item label="工号" prop="staff_id" >
             <el-input v-model="imgInfo.staff_id" placeholder="请输入用户工号"></el-input>
           </el-form-item>
-          <el-form-item label="用户姓名" prop="name" style="margin-left:50px;">
+          <el-form-item label="用户姓名" prop="name" >
             <el-input v-model="imgInfo.name" placeholder="请输入用户姓名">
               <!-- <template slot="append">.jpg</template> -->
             </el-input>
           </el-form-item>
+          <el-form-item label="张数">
+            <el-select v-model="imgInfo.count" placeholder="请选择">
+              <el-option label="第 1 张" value="1"></el-option>
+              <el-option label="第 2 张" value="2"></el-option>
+              <el-option label="第 3 张" value="3"></el-option>
+              <el-option label="第 4 张" value="4"></el-option>
+              <el-option label="第 5 张" value="5"></el-option>
+            </el-select>
+          </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="takePhoto">拍照</el-button>
-          <el-button type="primary" @click="confirmPhoto">确认</el-button>
+          <el-button type="primary" @click="takePhoto">拍照</el-button>
+          <el-button type="success" @click="confirmPhoto">确认</el-button>
+          <el-button type="warning" @click="closeDialog">关闭</el-button>
         </span>
       </el-dialog>
     </div>
@@ -62,6 +76,7 @@
 <script>
 import axios from 'axios'
 const uploadImgUrl = 'https://192.168.9.15:8360/index/img'
+const updateFaceUrl = 'https://192.168.9.15:8360/index/updateface'
 export default {
   data () {
     return {
@@ -70,9 +85,11 @@ export default {
       context: '',
       imageUrl: '',
       fileList2: [],
+      faceIds: [],
       imgInfo: {
         staff_id: '',
-        name: ''
+        name: '',
+        count: ''
       },
       rules: {
         staff_id: [
@@ -80,6 +97,9 @@ export default {
         ],
         name: [
           { required: true, message: '请输入用户姓名', trigger: 'blur' }
+        ],
+        count: [
+          { required: true, message: '请选择第几张', trigger: 'change' }
         ]
       },
       cameraDialogVisible: false
@@ -126,10 +146,10 @@ export default {
                   type: 'success'
                 })
               } else if (res.data.code === 2001) {
-                this.$alert('图片名称已存在，请重新上传', '提示', {
+                this.$alert(res.data.desc + '，请勿重新上传', '提示', {
                   confirmButtonText: '确定',
-                  type: 'warning',
-                  center: true
+                  type: 'warning'
+                  // center: true
                 }).then(() => {
                   this.fileList2.splice(i, 1)
                 }).catch(() => {
@@ -138,8 +158,8 @@ export default {
               } else if (res.data.code === 2002) {
                 this.$confirm('文件格式错误', '提示', {
                   confirmButtonText: '确定',
-                  type: 'warning',
-                  center: true
+                  type: 'warning'
+                  // center: true
                 }).then(() => {
                   this.fileList2.splice(i, 1)
                 }).catch(() => {
@@ -200,14 +220,67 @@ export default {
           callback: action => {
           }
         })
+      } else if (this.imgInfo.count === '') {
+        this.$alert('请选择是第几张照片', '提示', {
+          confirmButtonText: '确定',
+          type: 'warning',
+          callback: action => {
+          }
+        })
       } else {
+        if (this.faceIds.indexOf(this.imgInfo.staff_id) === -1) {
+          this.faceIds.push(this.imgInfo.staff_id)
+        } else {
+          console.log('已存在', this.imgInfo.staff_id)
+        }
         let src = this.canvas.toDataURL('image/jpeg')
         this.fileList2.push({
           status: 'ready',
-          name: this.imgInfo.staff_id + '_' + this.imgInfo.name + '.jpg',
+          name: this.imgInfo.staff_id + '_' + this.imgInfo.name + '_' + this.imgInfo.count + '.jpg',
           url: src
         })
-        this.cameraDialogVisible = false
+        // this.cameraDialogVisible = false
+      }
+    },
+    closeDialog () {
+      this.cameraDialogVisible = false
+    },
+    updateFace () {
+      if (this.faceIds.length > 0) {
+        axios.post(updateFaceUrl, {
+          faceIds: this.faceIds
+        })
+          .then((res) => {
+            console.log(res)
+            if (res.data.data.code === 2000) {
+              this.faceIds = []
+              this.$notify({
+                title: '更新成功',
+                type: 'success'
+              })
+            } else if (res.data.data.code === 2001) {
+              this.$alert('更新失败', '提示', {
+                confirmButtonText: '确定',
+                type: 'warning'
+              }).then(() => {
+                console.log('更新失败')
+              }).catch(() => {
+                console.log('错误')
+              })
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      } else {
+        this.$alert('请拍摄照片后再更新人脸库', '提示', {
+          confirmButtonText: '确定',
+          type: 'warning'
+        }).then(() => {
+          console.log('确定')
+        }).catch(() => {
+          console.log('错误')
+        })
       }
     },
     // 访问用户媒体设备的兼容方法
