@@ -333,7 +333,7 @@ export default {
         let src = this.canvas.toDataURL('image/jpeg')
         let tempName = this.imgInfo.staff_id + '_' + this.imgInfo.name + '_' + this.imgInfo.count + '.jpg'
         if (this.fileTemp.indexOf(tempName) === -1) {
-          this.imgInfo.count += 1
+          // this.imgInfo.count += 1
           this.fileTemp.push(tempName)
           this.fileList2.push({
             status: 'ready',
