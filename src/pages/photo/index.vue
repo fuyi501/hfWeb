@@ -12,11 +12,23 @@
         <d2-icon name="upload"/>
         上传到服务器
       </el-button>
-      <el-button style="margin-left: 10px; margin-bottom: 10px;" type="danger" @click="updateFace">
+      <el-button style="margin-left: 10px; margin-bottom: 10px;"
+        type="danger"
+        @click="updateFace"
+        v-loading.fullscreen.lock="loading">
         <d2-icon name="smile-o"/>
         更新人脸库
-      </el-button><br/>
-      <span style="font-size: 14px;"> 请拍摄清楚人脸照片，人脸处于照片中间，便于识别。 </span>
+      </el-button>
+      <!-- <el-button style="margin-left: 10px; margin-bottom: 10px;"
+        type="danger"
+        @click="closeImg">
+        <d2-icon name="smile-o"/>
+        清空已上传的图片预览
+      </el-button> -->
+      <br/>
+      <span style="font-size: 14px;">（1）请将脸部置于照片中间，眼睛看向摄像头，勿用手、墨镜、口罩等遮挡脸部。 </span><br/>
+      <span style="font-size: 14px;">（2）第一张请按照证件照要求拍摄，用于显示；后四张请尽量做出不同的面部表情。 </span><br/>
+      <span style="font-size: 14px;">（3）若有佩戴眼镜，请拍摄佩戴和摘下眼镜的照片各至少一张。 </span>
       <el-upload
         class="upload-demo"
         ref="upload"
@@ -54,7 +66,8 @@
             </el-input>
           </el-form-item>
           <el-form-item label="张数">
-            <el-select v-model="imgInfo.count" placeholder="请选择">
+            <el-select v-model="imgInfo.count"
+              placeholder="请选择">
               <el-option label="第 1 张" value="1"></el-option>
               <el-option label="第 2 张" value="2"></el-option>
               <el-option label="第 3 张" value="3"></el-option>
@@ -75,7 +88,7 @@
 
 <script>
 import axios from 'axios'
-const uploadImgUrl = 'https://192.168.9.15:8360/index/img'
+const uploadImgUrl = 'https://192.168.9.15:8360/index/imgall'
 const updateFaceUrl = 'https://192.168.9.15:8360/index/updateface'
 export default {
   data () {
@@ -85,6 +98,7 @@ export default {
       context: '',
       imageUrl: '',
       fileList2: [],
+      fileTemp: [],
       faceIds: [],
       imgInfo: {
         staff_id: '',
@@ -102,7 +116,9 @@ export default {
           { required: true, message: '请选择第几张', trigger: 'change' }
         ]
       },
-      cameraDialogVisible: false
+      cameraDialogVisible: false,
+      isUpdate: false, // 是否更新人脸库
+      loading: false
     }
   },
   methods: {
@@ -121,6 +137,7 @@ export default {
       let index = this.fileList2.indexOf(file)
       console.log('index:', index)
       this.fileList2.splice(index, 1)
+      this.fileTemp.splice(index, 1)
       console.log('remove: ', file, this.fileList2)
     },
     submitUpload () {
@@ -131,37 +148,55 @@ export default {
         this.$message.error('请先进行拍照')
       }
     },
+    // 一次性上传五张照片
     imgUpload () {
-      for (let i in this.fileList2) {
-        if (this.fileList2[i].status === 'ready') {
+      let tempFileList = []
+      if (this.fileList2.length % 5 === 0) {
+        for (let i in this.fileList2) {
+          console.log('图片', this.fileList2[i])
+          if (this.fileList2[i].status === 'ready') {
+            tempFileList.push(this.fileList2[i])
+          }
+        }
+        if (tempFileList.length === 5) {
           axios.post(uploadImgUrl, {
-            imgInfo: this.fileList2[i]
+            imgInfo: tempFileList
           })
             .then((res) => {
               console.log(res)
-              if (res.data.code === 2000) {
-                this.fileList2[i].status = 'success'
+              if (res.data.data.code === 2000) {
+                for (let i in this.fileList2) {
+                  this.fileList2[i].status = 'success'
+                }
+                this.isUpdate = true // 上传成功后可以更新人脸库
+                this.fileTemp = [] // 上传成功后临时文件名字列表清空
                 this.$notify({
                   title: '上传成功',
                   type: 'success'
                 })
-              } else if (res.data.code === 2001) {
+                this.$alert('上传成功，请点击更新人脸库进行人脸库的更新', '提示', {
+                  confirmButtonText: '确定',
+                  type: 'warning',
+                  callback: action => {
+                  }
+                })
+              } else if (res.data.data.code === 2001) {
                 this.$alert(res.data.desc + '，请勿重新上传', '提示', {
                   confirmButtonText: '确定',
                   type: 'warning'
                   // center: true
                 }).then(() => {
-                  this.fileList2.splice(i, 1)
+                  this.fileList2 = []
                 }).catch(() => {
                   console.log('错误')
                 })
-              } else if (res.data.code === 2002) {
+              } else if (res.data.data.code === 2002) {
                 this.$confirm('文件格式错误', '提示', {
                   confirmButtonText: '确定',
                   type: 'warning'
                   // center: true
                 }).then(() => {
-                  this.fileList2.splice(i, 1)
+                  this.fileList2 = []
                 }).catch(() => {
                   console.log('错误')
                 })
@@ -171,6 +206,68 @@ export default {
               console.log(err)
             })
         }
+      } else {
+        this.$alert('必须为同一人的5张照片，请检查拍摄是否完整', '提示', {
+          confirmButtonText: '确定',
+          type: 'warning',
+          callback: action => {
+          }
+        })
+      }
+    },
+    // 单张照片逐一上传
+    imgUpload2 () {
+      if (this.fileList2.length % 5 === 0) {
+        for (let i in this.fileList2) {
+          console.log('图片', this.fileList2[i])
+          if (this.fileList2[i].status === 'ready') {
+            axios.post(uploadImgUrl, {
+              imgInfo: this.fileList2[i]
+            })
+              .then((res) => {
+                console.log(res)
+                if (res.data.code === 2000) {
+                  this.fileList2[i].status = 'success'
+                  this.isUpdate = true // 上传成功后可以更新人脸库
+                  this.fileTemp = [] // 上传成功后临时文件名字列表清空
+                  this.$notify({
+                    title: '上传成功',
+                    type: 'success'
+                  })
+                } else if (res.data.code === 2001) {
+                  this.$alert(res.data.desc + '，请勿重新上传', '提示', {
+                    confirmButtonText: '确定',
+                    type: 'warning'
+                    // center: true
+                  }).then(() => {
+                    this.fileList2.splice(i, 1)
+                  }).catch(() => {
+                    console.log('错误')
+                  })
+                } else if (res.data.code === 2002) {
+                  this.$confirm('文件格式错误', '提示', {
+                    confirmButtonText: '确定',
+                    type: 'warning'
+                    // center: true
+                  }).then(() => {
+                    this.fileList2.splice(i, 1)
+                  }).catch(() => {
+                    console.log('错误')
+                  })
+                }
+              })
+              .catch(function (err) {
+                console.log(err)
+              })
+          }
+        }
+      } else {
+        this.$alert('必须为同一人的5张照片，请检查拍摄是否完整', '提示', {
+          confirmButtonText: '确定',
+          type: 'warning',
+          callback: action => {
+          }
+        })
       }
     },
     openDialog () {
@@ -234,11 +331,22 @@ export default {
           console.log('已存在', this.imgInfo.staff_id)
         }
         let src = this.canvas.toDataURL('image/jpeg')
-        this.fileList2.push({
-          status: 'ready',
-          name: this.imgInfo.staff_id + '_' + this.imgInfo.name + '_' + this.imgInfo.count + '.jpg',
-          url: src
-        })
+        let tempName = this.imgInfo.staff_id + '_' + this.imgInfo.name + '_' + this.imgInfo.count + '.jpg'
+        if (this.fileTemp.indexOf(tempName) === -1) {
+          this.imgInfo.count += 1
+          this.fileTemp.push(tempName)
+          this.fileList2.push({
+            status: 'ready',
+            name: tempName,
+            url: src
+          })
+        } else {
+          console.error('已存在该图片')
+          this.$notify({
+            title: '第' + this.imgInfo.count + '张照片已存在，请拍摄下一张',
+            type: 'error'
+          })
+        }
         // this.cameraDialogVisible = false
       }
     },
@@ -246,7 +354,19 @@ export default {
       this.cameraDialogVisible = false
     },
     updateFace () {
-      if (this.faceIds.length > 0) {
+      if (this.isUpdate) {
+        this.loading = true
+        setTimeout(() => {
+          if (this.loading) {
+            this.loading = false
+            this.$alert('更新失败, 请再次点击更新人脸库', '提示', {
+              confirmButtonText: '确定',
+              type: 'warning'
+            }).then(() => {
+            }).catch(() => {
+            })
+          }
+        }, 10000)
         axios.post(updateFaceUrl, {
           faceIds: this.faceIds
         })
@@ -254,11 +374,14 @@ export default {
             console.log(res)
             if (res.data.data.code === 2000) {
               this.faceIds = []
+              this.isUpdate = false
+              this.loading = false
+              this.fileList2 = []
               this.$notify({
                 title: '更新成功',
                 type: 'success'
               })
-            } else if (res.data.data.code === 2001) {
+            } else if (res.data.data.code === 2002) {
               this.$alert('更新失败', '提示', {
                 confirmButtonText: '确定',
                 type: 'warning'
@@ -273,7 +396,7 @@ export default {
             console.log(err)
           })
       } else {
-        this.$alert('请拍摄照片后再更新人脸库', '提示', {
+        this.$alert('请先上传到服务器再更新人脸库', '提示', {
           confirmButtonText: '确定',
           type: 'warning'
         }).then(() => {
@@ -281,6 +404,13 @@ export default {
         }).catch(() => {
           console.log('错误')
         })
+      }
+    },
+    closeImg () {
+      for (let i in this.fileList2) {
+        if (this.fileList2[i].status === 'success') {
+          this.fileList2.splice(i, 1)
+        }
       }
     },
     // 访问用户媒体设备的兼容方法
