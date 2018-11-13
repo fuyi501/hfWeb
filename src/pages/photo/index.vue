@@ -88,8 +88,8 @@
 
 <script>
 import axios from 'axios'
-const uploadImgUrl = 'https://192.168.9.15:8360/index/imgall'
-const updateFaceUrl = 'https://192.168.9.15:8360/index/updateface'
+const uploadImgUrl = 'https://192.168.100.240:8360/index/imgall'
+const updateFaceUrl = 'https://192.168.100.240:8360/index/updateface'
 export default {
   data () {
     return {
