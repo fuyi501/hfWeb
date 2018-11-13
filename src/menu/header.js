@@ -7,7 +7,8 @@ export default [
     icon: 'file-image-o',
     children: [
       { path: '/picture', title: '上传照片', icon: 'picture-o' },
-      { path: '/photo', title: '摄像头拍照', icon: 'camera' }
+      { path: '/photo', title: '摄像头拍照', icon: 'camera' },
+      { path: '/stream', title: '视频流', icon: 'camera' }
     ]
   },
   { path: '/staff', title: '员工管理', icon: 'user-circle' },

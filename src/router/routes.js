@@ -49,6 +49,12 @@ const frameIn = [
         meta: { meta, title: '摄像头拍照' }
       },
       {
+        path: '/stream',
+        name: 'stream',
+        component: () => import('@/pages/stream'),
+        meta: { meta, title: '视频流' }
+      },
+      {
         path: '/staff',
         name: 'staff',
         component: () => import('@/pages/staff'),
