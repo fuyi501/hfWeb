@@ -55,6 +55,12 @@ const frameIn = [
         meta: { meta, title: '视频流' }
       },
       {
+        path: '/stream2',
+        name: 'stream2',
+        component: () => import('@/pages/stream2'),
+        meta: { meta, title: '测试视频流' }
+      },
+      {
         path: '/staff',
         name: 'staff',
         component: () => import('@/pages/staff'),

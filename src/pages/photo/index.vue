@@ -88,7 +88,10 @@
 
 <script>
 import axios from 'axios'
-const uploadImgUrl = 'https://192.168.100.240:8360/index/imgall'
+// 单张照片逐一上传
+const uploadImgUrl = 'https://192.168.100.240:8360/index/img'
+// 五张一起上传，这里后台是异步执行，出错，暂不使用
+const uploadImgAllUrl = 'https://192.168.100.240:8360/index/imgall'
 const updateFaceUrl = 'https://192.168.100.240:8360/index/updateface'
 export default {
   data () {
@@ -143,7 +146,8 @@ export default {
     submitUpload () {
       // this.$refs.upload.submit()
       if (this.fileList2.length > 0) {
-        this.imgUpload()
+        // 单张照片逐一上传
+        this.imgUpload2()
       } else {
         this.$message.error('请先进行拍照')
       }
@@ -158,8 +162,23 @@ export default {
             tempFileList.push(this.fileList2[i])
           }
         }
+
+        let iii = []
+        for (let j in tempFileList) {
+          iii.push(tempFileList[j].url)
+          console.log(j)
+        }
+
+        var nary = iii.sort()
+        for (var i = 0; i < iii.length; i++) {
+          if (nary[i] === nary[i + 1]) {
+            console.log('数组重复内容：' + nary[i])
+          }
+          console.log('没有重复的')
+        }
+
         if (tempFileList.length === 5) {
-          axios.post(uploadImgUrl, {
+          axios.post(uploadImgAllUrl, {
             imgInfo: tempFileList
           })
             .then((res) => {
@@ -331,6 +350,7 @@ export default {
           console.log('已存在', this.imgInfo.staff_id)
         }
         let src = this.canvas.toDataURL('image/jpeg')
+        console.log('src:', src)
         let tempName = this.imgInfo.staff_id + '_' + this.imgInfo.name + '_' + this.imgInfo.count + '.jpg'
         if (this.fileTemp.indexOf(tempName) === -1) {
           // this.imgInfo.count += 1

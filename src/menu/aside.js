@@ -18,7 +18,8 @@ export default [
     icon: 'folder-o',
     children: [
       { path: '/face', title: '上传图片', icon: 'folder-o' },
-      { path: '/table', title: '上传表格', icon: 'table' }
+      { path: '/table', title: '上传表格', icon: 'table' },
+      { path: '/stream2', title: '测试视频流', icon: 'camera' }
     ]
   }
 ]

@@ -31,6 +31,10 @@ export default {
     return {
       columns: [
         {
+          title: '工号',
+          key: 'staff_id'
+        },
+        {
           title: '姓名',
           key: 'name'
         },

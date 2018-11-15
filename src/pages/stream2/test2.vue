@@ -50,12 +50,11 @@
         center>
         <el-row type="flex" justify="end" class="d2-mb">
           <el-col :span="12" style="text-align:center">
-            <video id=myPlayer class="video-js vjs-default-skin" style="width:500px;height:325px;" crossOrigin='anonymous' controls>
-              <source src="http://192.168.9.94:8080/hls/stream.m3u8" type="application/x-mpegURL">
-              <p class="vjs-no-js">
-                not support
-              </p>
-          </video>
+            <video-player class="video-player vjs-custom-skin"
+              :options="playerOptions"
+              @loadeddata="onPlayerLoadeddata($event)"
+            >
+            </video-player>
           </el-col>
           <el-col :span="12" style="text-align:center; margin-left:10px;">
             <canvas id="canvas" width="600" height="337"></canvas>
@@ -131,16 +130,27 @@ export default {
       },
       cameraDialogVisible: false,
       isUpdate: false, // 是否更新人脸库
-      loading: false
+      loading: false,
+      playerOptions: {
+        // videojs and plugin options
+        width: '360',
+        // 将播放器置于流畅模式，并在计算播放器的动态大小时使用该值。
+        // 值应该代表一个比例 - 用冒号分隔的两个数字（例如"16:9"或"4:3"）
+        aspectRatio: '16:9',
+        // 当true时，Video.js player将拥有流体大小。换句话说，它将按比例缩放以适应其容器。
+        fluid: true,
+        sources: [{
+          type: 'application/x-mpegURL',
+          src: 'http://127.0.0.1:8080/hls/stream.m3u8'
+        }],
+        controlBar: {
+          timeDivider: false,
+          durationDisplay: false
+        },
+        poster: 'https://surmon-china.github.io/vue-quill-editor/static/images/surmon-5.jpg',
+        notSupportedMessage: '此视频暂无法播放，请稍后再试' // 允许覆盖Video.js无法播放媒体源时显示的默认信息。
+      }
     }
-  },
-  mounted () {
-    console.log('hls 视频流播放')
-    // console.log('video.js: ', videojs)
-    // this.video = document.getElementById('myPlayer')
-    // console.log('this.video:', this.video)
-    // var player = videojs(this.video)
-    // player.play()
   },
   methods: {
     onPlayerLoadeddata (player) {
@@ -298,43 +308,22 @@ export default {
     openDialog () {
       console.log('打开了 dialog')
       // this.video = document.getElementById('video')
-      // console.log('video.js: ', videojs)
-      this.video = document.getElementById('myPlayer')
-      console.log('this.video:', this.video)
-      var player = videojs(this.video)
-      player.play()
     },
     handleCamera () {
       this.cameraDialogVisible = true
     },
     takePhoto () {
       console.log('拍照')
-      // var videoTag = document.getElementsByTagName('video')
-      // this.video = videoTag[0]
-      this.video = document.getElementById('myPlayer')
-      alert(this.video)
+      var videoTag = document.getElementsByTagName('video')
+      this.video = videoTag[0]
       this.canvas = document.getElementById('canvas')
       this.context = this.canvas.getContext('2d')
       this.context.drawImage(this.video, 0, 0, 460, 260)
     },
     confirmPhoto () {
-      // 这里是最坑的地方，根据 canvas 获取到 base64
-      // let src = this.canvas.toDataURL('image/jpeg')
-      var src = ''
-      let that = this
-      // alert(this.canvas)
-      const reader = new FileReader()
-      // alert(this.canvas.msToBlob())
-      reader.readAsDataURL(this.canvas.msToBlob())
-      reader.onloadend = function (e) {
-        src = e.target.result
-        alert(e.target.result)
-        alert(src)
-        that.$notify({ title: '图片base64：' + src })
-        that.saveImg(src)
-      }
-    },
-    saveImg (src) {
+      alert(this.canvas)
+      let src = this.canvas.toDataURL('image/jpeg')
+      alert(src)
       if (this.canvas === '') {
         this.$alert('请先进行拍照', '提示', {
           confirmButtonText: '确定',
@@ -370,7 +359,9 @@ export default {
         } else {
           console.log('已存在', this.imgInfo.staff_id)
         }
-        let tempName = this.imgInfo.staff_id + '_' + this.imgInfo.name + '_' + this.imgInfo.count + '.png'
+        let src = this.canvas.toDataURL('image/jpeg')
+
+        let tempName = this.imgInfo.staff_id + '_' + this.imgInfo.name + '_' + this.imgInfo.count + '.jpg'
         if (this.fileTemp.indexOf(tempName) === -1) {
           // this.imgInfo.count += 1
           this.fileTemp.push(tempName)
