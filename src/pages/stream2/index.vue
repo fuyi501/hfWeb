@@ -28,7 +28,7 @@
           >
           </video-player>
           <video id=myPlayer class="video-js vjs-default-skin" style="width:500px;height:325px;" crossOrigin='anonymous' controls>
-            <source src="http://192.168.9.94:8080/hls/stream.m3u8" type="application/x-mpegURL">
+            <source src="https://192.168.100.240/hls/stream.m3u8" type="application/x-mpegURL">
             <p class="vjs-no-js">
               not support
             </p>
@@ -69,7 +69,7 @@ export default {
         sources: [{
           crossOrigin: 'anonymous',
           type: 'application/x-mpegURL',
-          src: 'http://192.168.9.94:8080/hls/stream.m3u8'
+          src: 'https://192.168.100.240/hls/stream.m3u8'
         }],
         controlBar: {
           timeDivider: false,

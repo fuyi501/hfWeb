@@ -28,6 +28,9 @@ const deleteDataUrl = 'https://192.168.100.240:8360/index/deletetable'
 const tableType = 'staff'
 export default {
   data () {
+    let validateId = (rule, value, callback) => {
+      this.staffIdSet.has(Number(value)) ? callback(new Error('该工号已存在')) : callback()
+    }
     return {
       columns: [
         {
@@ -125,6 +128,7 @@ export default {
         }
       ],
       data: [],
+      staffIdSet: '',
       pagination: {
         pageSize: 20,
         layout: 'prev, pager, next, total'
@@ -149,10 +153,10 @@ export default {
         size: 'small'
       },
       formTemplate: {
-        staff_id: {
-          title: '工号',
-          value: ''
-        },
+        // staff_id: {
+        //   title: '工号',
+        //   value: ''
+        // },
         name: {
           title: '姓名',
           value: ''
@@ -296,7 +300,8 @@ export default {
       formRules: {
         // 员工表
         staff_id: [ { required: true, message: '请输入工号', trigger: 'blur' },
-          { pattern: /^\d+$/, message: '只能输入数字' } ],
+          { pattern: /^\d+$/, message: '只能输入数字' },
+          { validator: validateId, trigger: 'blur' } ],
         name: [ { required: true, message: '请输入姓名', trigger: 'blur' } ],
         gender: [ { required: true, message: '请选择性别', trigger: 'blur' } ],
         department: [ { required: true, message: '请选择部门', trigger: 'blur' } ],
@@ -318,11 +323,12 @@ export default {
     }
   },
   mounted () {
-    console.log('mounted')
+    console.log('员工管理 mounted')
     this.getData()
   },
   methods: {
     handleRowAdd (row, done) {
+      console.log('添加数据')
       this.formOptions.saveLoading = true
       setTimeout(() => {
         console.log(row)
@@ -336,6 +342,7 @@ export default {
       }, 300)
     },
     handleRowEdit ({ index, row }, done) {
+      console.log('编辑数据')
       this.formOptions.saveLoading = true
       setTimeout(() => {
         console.log(index)
@@ -378,7 +385,9 @@ export default {
         .then((res) => {
           console.log(res)
           if (res.data.errno === 0) {
+            this.staffIdSet = new Set()
             for (let i in res.data.data) {
+              this.staffIdSet.add(res.data.data[i].staff_id)
               this.data.push({
                 staff_id: res.data.data[i].staff_id,
                 name: res.data.data[i].name,

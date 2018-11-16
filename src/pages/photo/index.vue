@@ -45,15 +45,15 @@
       <el-dialog
         title="摄像头拍照"
         :visible.sync="cameraDialogVisible"
-        width="886px"
+        width="1000px"
         @open="openDialog"
         center>
         <el-row type="flex" justify="end" class="d2-mb">
           <el-col :span="12" style="text-align:center">
-            <video id="video" ref="vid" width="320" height="320" controls></video>
+            <video id="video" ref="vid" width="360" height="360" controls></video>
           </el-col>
           <el-col :span="12" style="text-align:center">
-            <canvas id="canvas" width="320" height="320"></canvas>
+            <canvas id="canvas" width="360" height="360"></canvas>
           </el-col>
         </el-row>
         <el-form :inline="true" :model="imgInfo" :rules="rules" ref="imgInfo" class="demo-form-inline">
@@ -77,8 +77,8 @@
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="takePhoto">拍照</el-button>
-          <el-button type="success" @click="confirmPhoto">确认</el-button>
+          <el-button type="primary" @click="takePhoto">预拍照</el-button>
+          <el-button type="success" @click="confirmPhoto">确认照片</el-button>
           <el-button type="warning" @click="closeDialog">关闭</el-button>
         </span>
       </el-dialog>
@@ -163,19 +163,19 @@ export default {
           }
         }
 
-        let iii = []
-        for (let j in tempFileList) {
-          iii.push(tempFileList[j].url)
-          console.log(j)
-        }
+        // let iii = []
+        // for (let j in tempFileList) {
+        //   iii.push(tempFileList[j].url)
+        //   console.log(j)
+        // }
 
-        var nary = iii.sort()
-        for (var i = 0; i < iii.length; i++) {
-          if (nary[i] === nary[i + 1]) {
-            console.log('数组重复内容：' + nary[i])
-          }
-          console.log('没有重复的')
-        }
+        // var nary = iii.sort()
+        // for (var i = 0; i < iii.length; i++) {
+        //   if (nary[i] === nary[i + 1]) {
+        //     console.log('数组重复内容：' + nary[i])
+        //   }
+        //   console.log('没有重复的')
+        // }
 
         if (tempFileList.length === 5) {
           axios.post(uploadImgAllUrl, {
@@ -295,7 +295,7 @@ export default {
         this.video = document.getElementById('video')
         if (navigator.mediaDevices.getUserMedia || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
           // 调用用户媒体设备, 访问摄像头
-          this.getUserMedia({ video: { width: 320, height: 320 } }, this.success, this.error)
+          this.getUserMedia({ video: { width: 360, height: 360 } }, this.success, this.error)
         } else {
           this.$alert('该浏览器不支持访问用户媒体设备', '提示', {
             confirmButtonText: '确定',
@@ -312,7 +312,7 @@ export default {
     takePhoto () {
       this.canvas = document.getElementById('canvas')
       this.context = this.canvas.getContext('2d')
-      this.context.drawImage(this.video, 0, 0, 320, 320)
+      this.context.drawImage(this.video, 0, 0, 360, 360)
     },
     confirmPhoto () {
       if (this.canvas === '') {

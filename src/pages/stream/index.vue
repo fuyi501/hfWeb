@@ -51,7 +51,7 @@
         <el-row type="flex" justify="end" class="d2-mb">
           <el-col :span="12" style="text-align:center">
             <video id=myPlayer class="video-js vjs-default-skin" style="width:500px;height:325px;" crossOrigin='anonymous' controls>
-              <source src="http://192.168.9.94:8080/hls/stream.m3u8" type="application/x-mpegURL">
+              <source src="https://192.168.100.240/hls/stream.m3u8" type="application/x-mpegURL">
               <p class="vjs-no-js">
                 not support
               </p>
@@ -82,8 +82,8 @@
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="takePhoto">拍照</el-button>
-          <el-button type="success" @click="confirmPhoto">确认</el-button>
+          <el-button type="primary" @click="takePhoto">预拍照</el-button>
+          <el-button type="success" @click="confirmPhoto">确认照片</el-button>
           <el-button type="warning" @click="closeDialog">关闭</el-button>
         </span>
       </el-dialog>
@@ -99,7 +99,10 @@ import videojs from 'video.js'
 window.videojs = videojs
 require('video.js/dist/video-js.css')
 require('vue-video-player/src/custom-theme.css')
-const uploadImgUrl = 'https://192.168.100.240:8360/index/imgall'
+// 单张照片逐一上传
+const uploadImgUrl = 'https://192.168.100.240:8360/index/img'
+// 五张一起上传，这里后台是异步执行，出错，暂不使用
+const uploadImgAllUrl = 'https://192.168.100.240:8360/index/imgall'
 const updateFaceUrl = 'https://192.168.100.240:8360/index/updateface'
 export default {
   data () {
@@ -168,7 +171,11 @@ export default {
     submitUpload () {
       // this.$refs.upload.submit()
       if (this.fileList2.length > 0) {
-        this.imgUpload()
+        this.$notify({
+          message: '开始上传照片',
+          type: 'success'
+        })
+        this.imgUpload2()
       } else {
         this.$message.error('请先进行拍照')
       }
@@ -184,7 +191,7 @@ export default {
           }
         }
         if (tempFileList.length === 5) {
-          axios.post(uploadImgUrl, {
+          axios.post(uploadImgAllUrl, {
             imgInfo: tempFileList
           })
             .then((res) => {
@@ -242,6 +249,10 @@ export default {
     },
     // 单张照片逐一上传
     imgUpload2 () {
+      this.$notify({
+        message: '上传照片中',
+        type: 'success'
+      })
       if (this.fileList2.length % 5 === 0) {
         for (let i in this.fileList2) {
           console.log('图片', this.fileList2[i])
@@ -312,25 +323,25 @@ export default {
       // var videoTag = document.getElementsByTagName('video')
       // this.video = videoTag[0]
       this.video = document.getElementById('myPlayer')
-      alert(this.video)
+      // console.log(this.video)
       this.canvas = document.getElementById('canvas')
       this.context = this.canvas.getContext('2d')
-      this.context.drawImage(this.video, 0, 0, 460, 260)
+      this.context.drawImage(this.video, 0, 0, 500, 281)
     },
     confirmPhoto () {
       // 这里是最坑的地方，根据 canvas 获取到 base64
       // let src = this.canvas.toDataURL('image/jpeg')
       var src = ''
       let that = this
-      // alert(this.canvas)
+      // console.log(this.canvas)
       const reader = new FileReader()
-      // alert(this.canvas.msToBlob())
+      // console.log(this.canvas.msToBlob())
       reader.readAsDataURL(this.canvas.msToBlob())
       reader.onloadend = function (e) {
         src = e.target.result
-        alert(e.target.result)
-        alert(src)
-        that.$notify({ title: '图片base64：' + src })
+        console.log(e.target.result)
+        console.log(src)
+        // that.$notify({ title: '图片base64：' + src })
         that.saveImg(src)
       }
     },
@@ -364,13 +375,13 @@ export default {
           }
         })
       } else {
-        this.$notify({ title: '进来了' })
+        // this.$notify({ title: '进来了' })
         if (this.faceIds.indexOf(this.imgInfo.staff_id) === -1) {
           this.faceIds.push(this.imgInfo.staff_id)
         } else {
           console.log('已存在', this.imgInfo.staff_id)
         }
-        let tempName = this.imgInfo.staff_id + '_' + this.imgInfo.name + '_' + this.imgInfo.count + '.png'
+        let tempName = this.imgInfo.staff_id + '_' + this.imgInfo.name + '_' + this.imgInfo.count + '.jpg'
         if (this.fileTemp.indexOf(tempName) === -1) {
           // this.imgInfo.count += 1
           this.fileTemp.push(tempName)
@@ -378,6 +389,10 @@ export default {
             status: 'ready',
             name: tempName,
             url: src
+          })
+          this.$notify({
+            message: '第' + this.imgInfo.count + '张照片拍摄成功',
+            type: 'success'
           })
         } else {
           console.error('已存在该图片')
