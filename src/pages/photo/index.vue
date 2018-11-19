@@ -45,15 +45,15 @@
       <el-dialog
         title="摄像头拍照"
         :visible.sync="cameraDialogVisible"
-        width="1000px"
+        width="1400px"
         @open="openDialog"
         center>
         <el-row type="flex" justify="end" class="d2-mb">
           <el-col :span="12" style="text-align:center">
-            <video id="video" ref="vid" width="360" height="360" controls></video>
+            <video id="video" ref="vid" width="600" height="340" controls></video>
           </el-col>
           <el-col :span="12" style="text-align:center">
-            <canvas id="canvas" width="360" height="360"></canvas>
+            <canvas id="canvas" width="600" height="340"></canvas>
           </el-col>
         </el-row>
         <el-form :inline="true" :model="imgInfo" :rules="rules" ref="imgInfo" class="demo-form-inline">
@@ -295,7 +295,7 @@ export default {
         this.video = document.getElementById('video')
         if (navigator.mediaDevices.getUserMedia || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
           // 调用用户媒体设备, 访问摄像头
-          this.getUserMedia({ video: { width: 360, height: 360 } }, this.success, this.error)
+          this.getUserMedia({ video: { width: 640, height: 360 } }, this.success, this.error)
         } else {
           this.$alert('该浏览器不支持访问用户媒体设备', '提示', {
             confirmButtonText: '确定',
@@ -312,7 +312,7 @@ export default {
     takePhoto () {
       this.canvas = document.getElementById('canvas')
       this.context = this.canvas.getContext('2d')
-      this.context.drawImage(this.video, 0, 0, 360, 360)
+      this.context.drawImage(this.video, 0, 0, 640, 360)
     },
     confirmPhoto () {
       if (this.canvas === '') {
