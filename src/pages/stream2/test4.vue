@@ -45,15 +45,20 @@
       <el-dialog
         title="摄像头拍照"
         :visible.sync="cameraDialogVisible"
-        width="1400px"
+        width="1200px"
         @open="openDialog"
         center>
         <el-row type="flex" justify="end" class="d2-mb">
           <el-col :span="12" style="text-align:center">
-            <video id="video" ref="vid" width="600" height="340" controls></video>
+            <video id=myPlayer class="video-js vjs-default-skin" style="width:500px;height:325px;" crossOrigin='anonymous' controls>
+              <source src="https://192.168.9.15/hls/stream.m3u8" type="application/x-mpegURL">
+              <p class="vjs-no-js">
+                not support
+              </p>
+          </video>
           </el-col>
-          <el-col :span="12" style="text-align:center">
-            <canvas id="canvas" width="600" height="340"></canvas>
+          <el-col :span="12" style="text-align:center; margin-left:10px;">
+            <canvas id="canvas" width="600" height="337"></canvas>
           </el-col>
         </el-row>
         <el-form :inline="true" :model="imgInfo" :rules="rules" ref="imgInfo" class="demo-form-inline">
@@ -88,6 +93,12 @@
 
 <script>
 import axios from 'axios'
+import 'videojs-contrib-hls/dist/videojs-contrib-hls.js'
+// videojs
+import videojs from 'video.js'
+window.videojs = videojs
+require('video.js/dist/video-js.css')
+require('vue-video-player/src/custom-theme.css')
 // 单张照片逐一上传
 const uploadImgUrl = 'https://192.168.9.15:8360/index/img'
 // 五张一起上传，这里后台是异步执行，出错，暂不使用
@@ -96,6 +107,8 @@ const updateFaceUrl = 'https://192.168.9.15:8360/index/updateface'
 export default {
   data () {
     return {
+      videoWidth: '',
+      videoHeight: '',
       video: '',
       canvas: '',
       context: '',
@@ -124,7 +137,19 @@ export default {
       loading: false
     }
   },
+  mounted () {
+    console.log('hls 视频流播放')
+    // console.log('video.js: ', videojs)
+    // this.video = document.getElementById('myPlayer')
+    // console.log('this.video:', this.video)
+    // var player = videojs(this.video)
+    // player.play()
+  },
   methods: {
+    onPlayerLoadeddata (player) {
+      this.videoWidth = player.videoWidth()
+      this.videoHeight = player.videoHeight()
+    },
     handleAvatarSuccess (res, file) {
       console.log('返回', res, file)
       this.imageUrl = URL.createObjectURL(file.raw)
@@ -146,7 +171,10 @@ export default {
     submitUpload () {
       // this.$refs.upload.submit()
       if (this.fileList2.length > 0) {
-        // 单张照片逐一上传
+        this.$notify({
+          message: '开始上传照片',
+          type: 'success'
+        })
         this.imgUpload2()
       } else {
         this.$message.error('请先进行拍照')
@@ -162,21 +190,6 @@ export default {
             tempFileList.push(this.fileList2[i])
           }
         }
-
-        // let iii = []
-        // for (let j in tempFileList) {
-        //   iii.push(tempFileList[j].url)
-        //   console.log(j)
-        // }
-
-        // var nary = iii.sort()
-        // for (var i = 0; i < iii.length; i++) {
-        //   if (nary[i] === nary[i + 1]) {
-        //     console.log('数组重复内容：' + nary[i])
-        //   }
-        //   console.log('没有重复的')
-        // }
-
         if (tempFileList.length === 5) {
           axios.post(uploadImgAllUrl, {
             imgInfo: tempFileList
@@ -236,6 +249,10 @@ export default {
     },
     // 单张照片逐一上传
     imgUpload2 () {
+      this.$notify({
+        message: '上传照片中',
+        type: 'success'
+      })
       if (this.fileList2.length % 5 === 0) {
         for (let i in this.fileList2) {
           console.log('图片', this.fileList2[i])
@@ -290,31 +307,45 @@ export default {
       }
     },
     openDialog () {
-      console.log('打开了')
-      setTimeout(() => {
-        this.video = document.getElementById('video')
-        if (navigator.mediaDevices.getUserMedia || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
-          // 调用用户媒体设备, 访问摄像头
-          this.getUserMedia({ video: { width: 640, height: 360 } }, this.success, this.error)
-        } else {
-          this.$alert('该浏览器不支持访问用户媒体设备', '提示', {
-            confirmButtonText: '确定',
-            type: 'warning',
-            callback: action => {
-            }
-          })
-        }
-      }, 100)
+      console.log('打开了 dialog')
+      // this.video = document.getElementById('video')
+      // console.log('video.js: ', videojs)
+      this.video = document.getElementById('myPlayer')
+      console.log('this.video:', this.video)
+      var player = videojs(this.video)
+      player.play()
     },
     handleCamera () {
       this.cameraDialogVisible = true
     },
     takePhoto () {
+      console.log('拍照')
+      // var videoTag = document.getElementsByTagName('video')
+      // this.video = videoTag[0]
+      this.video = document.getElementById('myPlayer')
+      // console.log(this.video)
       this.canvas = document.getElementById('canvas')
       this.context = this.canvas.getContext('2d')
-      this.context.drawImage(this.video, 0, 0, 640, 360)
+      this.context.drawImage(this.video, 0, 0, 500, 281)
     },
     confirmPhoto () {
+      // 这里是最坑的地方，根据 canvas 获取到 base64
+      // let src = this.canvas.toDataURL('image/jpeg')
+      var src = ''
+      let that = this
+      // console.log(this.canvas)
+      const reader = new FileReader()
+      // console.log(this.canvas.msToBlob())
+      reader.readAsDataURL(this.canvas.msToBlob())
+      reader.onloadend = function (e) {
+        src = e.target.result
+        console.log(e.target.result)
+        console.log(src)
+        // that.$notify({ title: '图片base64：' + src })
+        that.saveImg(src)
+      }
+    },
+    saveImg (src) {
       if (this.canvas === '') {
         this.$alert('请先进行拍照', '提示', {
           confirmButtonText: '确定',
@@ -344,13 +375,12 @@ export default {
           }
         })
       } else {
+        // this.$notify({ title: '进来了' })
         if (this.faceIds.indexOf(this.imgInfo.staff_id) === -1) {
           this.faceIds.push(this.imgInfo.staff_id)
         } else {
           console.log('已存在', this.imgInfo.staff_id)
         }
-        let src = this.canvas.toDataURL('image/jpeg')
-        console.log('src:', src)
         let tempName = this.imgInfo.staff_id + '_' + this.imgInfo.name + '_' + this.imgInfo.count + '.jpg'
         if (this.fileTemp.indexOf(tempName) === -1) {
           // this.imgInfo.count += 1
@@ -359,6 +389,10 @@ export default {
             status: 'ready',
             name: tempName,
             url: src
+          })
+          this.$notify({
+            message: '第' + this.imgInfo.count + '张照片拍摄成功',
+            type: 'success'
           })
         } else {
           console.error('已存在该图片')
@@ -387,7 +421,6 @@ export default {
             })
           }
         }, 10000)
-        console.log('faceIds:', this.faceIds)
         axios.post(updateFaceUrl, {
           faceIds: this.faceIds
         })
@@ -433,52 +466,6 @@ export default {
           this.fileList2.splice(i, 1)
         }
       }
-    },
-    // 访问用户媒体设备的兼容方法
-    getUserMedia (constraints, success, error) {
-      if (navigator.mediaDevices.getUserMedia) {
-        // 最新的标准API
-        navigator.mediaDevices.getUserMedia(constraints).then(success).catch(error)
-      } else if (navigator.webkitGetUserMedia) {
-        // webkit核心浏览器
-        navigator.webkitGetUserMedia(constraints, success, error)
-      } else if (navigator.mozGetUserMedia) {
-        // firfox浏览器
-        navigator.mozGetUserMedia(constraints, success, error)
-      } else if (navigator.getUserMedia) {
-        // 旧版API
-        navigator.getUserMedia(constraints, success, error)
-      }
-    },
-    success (stream) {
-      // 兼容webkit核心浏览器
-      // let CompatibleURL = window.URL || window.webkitURL
-      // 将视频流设置为video元素的源
-      console.log(stream)
-      // video.src = CompatibleURL.createObjectURL(stream)
-      this.video.srcObject = stream
-      this.video.play()
-    },
-    error (error) {
-      console.log(error)
-      if (error.name === 'NotFoundError') {
-        this.$alert('没有找到摄像头设备，请检查是否有摄像头', '提示', {
-          confirmButtonText: '确定',
-          type: 'warning',
-          callback: action => {
-            this.cameraDialogVisible = false
-          }
-        })
-      } else {
-        this.$alert(`访问用户媒体设备失败：${error.name}，${error.message}`, '提示', {
-          confirmButtonText: '确定',
-          type: 'warning',
-          callback: action => {
-            this.cameraDialogVisible = false
-          }
-        })
-      }
-      console.log(`访问用户媒体设备失败${error.name}, ${error.message}`)
     }
   }
 }

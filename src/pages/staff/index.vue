@@ -21,10 +21,10 @@
 
 <script>
 import axios from 'axios'
-const addDataUrl = 'https://192.168.100.240:8360/index/addtable'
-const getDataUrl = 'https://192.168.100.240:8360/index/gettable'
-const editDataUrl = 'https://192.168.100.240:8360/index/edittable'
-const deleteDataUrl = 'https://192.168.100.240:8360/index/deletetable'
+const addDataUrl = 'https://192.168.9.15:8360/index/addtable'
+const getDataUrl = 'https://192.168.9.15:8360/index/gettable'
+const editDataUrl = 'https://192.168.9.15:8360/index/edittable'
+const deleteDataUrl = 'https://192.168.9.15:8360/index/deletetable'
 const tableType = 'staff'
 export default {
   data () {

@@ -12,6 +12,16 @@
 
 `npm start`
 
+## 流地址
+
+rtsp://admin:Admin12345@192.168.2.74:554/Streaming/Channels/101
+
+## 推流
+
+ffmpeg -i rtsp://admin:swjtu9422@192.168.9.36:554 -vcodec h264 -f flv -an rtmp://192.168.9.15:1935/hls/stream
+
+ffmpeg -i rtsp://admin:Admin12345@192.168.2.74:554/Streaming/Channels/101 -vcodec h264 -f flv -an rtmp://192.168.9.15:1935/hls/stream
+
 # 问题
 
 ## element dialog 获取不到 dom
