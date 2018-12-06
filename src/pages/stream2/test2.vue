@@ -98,8 +98,8 @@ import videojs from 'video.js'
 window.videojs = videojs
 require('video.js/dist/video-js.css')
 require('vue-video-player/src/custom-theme.css')
-const uploadImgUrl = 'https://192.168.9.15:8360/index/imgall'
-const updateFaceUrl = 'https://192.168.9.15:8360/index/updateface'
+const uploadImgUrl = 'http://192.168.9.15:8360/index/imgall'
+const updateFaceUrl = 'http://192.168.9.15:8360/index/updateface'
 export default {
   data () {
     return {

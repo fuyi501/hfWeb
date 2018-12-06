@@ -51,7 +51,7 @@
         <el-row type="flex" justify="end" class="d2-mb">
           <el-col :span="12" style="text-align:center">
             <video id=myPlayer class="video-js vjs-default-skin" style="width:500px;height:325px;" crossOrigin='anonymous' controls>
-              <source src="https://192.168.9.15/hls/stream.m3u8" type="application/x-mpegURL">
+              <source src="http://192.168.9.15/hls/stream.m3u8" type="application/x-mpegURL">
               <p class="vjs-no-js">
                 not support
               </p>
@@ -100,10 +100,10 @@ window.videojs = videojs
 require('video.js/dist/video-js.css')
 require('vue-video-player/src/custom-theme.css')
 // 单张照片逐一上传
-const uploadImgUrl = 'https://192.168.9.15:8360/index/img'
+const uploadImgUrl = 'http://192.168.9.15:8360/index/img'
 // 五张一起上传，这里后台是异步执行，出错，暂不使用
-const uploadImgAllUrl = 'https://192.168.9.15:8360/index/imgall'
-const updateFaceUrl = 'https://192.168.9.15:8360/index/updateface'
+const uploadImgAllUrl = 'http://192.168.9.15:8360/index/imgall'
+const updateFaceUrl = 'http://192.168.9.15:8360/index/updateface'
 export default {
   data () {
     return {

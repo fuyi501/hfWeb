@@ -21,10 +21,10 @@
 <script>
 import axios from 'axios'
 import dayjs from 'dayjs'
-const addDataUrl = 'https://192.168.9.15:8360/index/addtable'
-const getDataUrl = 'https://192.168.9.15:8360/index/gettable'
-const editDataUrl = 'https://192.168.9.15:8360/index/edittable'
-const deleteDataUrl = 'https://192.168.9.15:8360/index/deletetable'
+const addDataUrl = 'http://192.168.9.15:8360/index/addtable'
+const getDataUrl = 'http://192.168.9.15:8360/index/gettable'
+const editDataUrl = 'http://192.168.9.15:8360/index/edittable'
+const deleteDataUrl = 'http://192.168.9.15:8360/index/deletetable'
 export default {
   data () {
     return {
