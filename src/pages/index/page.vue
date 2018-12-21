@@ -1,44 +1,31 @@
 <template>
   <d2-container class="page">
-    <d2-page-cover
-      title="宜昌汇富人事后台管理系统"
-      sub-title=""
-    >
-      <!-- <d2-icon-svg style="width: 120px;" name="d2-admin"/> -->
-      <img :src="`${$baseUrl}image/index2.jpg`" style="width: 380px; height: 51px;">
-
-      <template slot="footer">
-        <div class="page__btn-group">
-          <span @click="$open('http://www.hifull.com/nav/14.html')">公司简介</span> |
-          <span @click="$open('http://www.hifull.com/intro/2.html')">领导致辞</span> |
-          <span @click="$open('http://www.hifull.com/rongyu.html?atlasCateId=3')">荣誉资质</span> |
-          <span @click="$open('http://www.hifull.com/nav/9.html')">产品展示</span> |
-          <span @click="$open('http://www.hifull.com/nav/28.html')">专利技术</span> |
-          <span @click="$open('http://www.hifull.com/intro/17.html')">联系我们</span>
-          <!-- <el-popover
-            :width="172"
-            trigger="hover">
-            <p class="d2-mt-0 d2-mb-10">D2Projects</p>
-            <img src="./image/qr@2x.png" style="width: 172px;">
-            <span slot="reference">微信公众号</span>
-            <p
-              style="
-                font-size: 12px;
-                margin-top: 0px;
-                margin-bottom: 0px;
-              ">
-              官方公众号，主要推送前端技术类文章、框架资源、学习教程，以及 D2 系列项目更新信息
-            </p>
-          </el-popover> -->
-        </div>
-      </template>
-    </d2-page-cover>
+    <el-row>
+      <el-col :span="8">
+        <el-card :body-style="{ padding: '0px' }" style="height:120px;">
+          <el-row type="flex" align="middle" justify="center" style="height:120px;" >
+            <el-col :span="8" style="height:120px;padding:0px;background-color:red;margin:auto;text-align:center;line-height:120px;">
+              <d2-icon name="user-o" style="font-size:60px;margin:auto;text-align:center;"/>
+            </el-col>
+            <el-col :span="16">
+              <span style="font-size:50px;">800</span><br/>
+              <el-button type="text" class="button">操作按钮</el-button>
+            </el-col>
+          </el-row>
+        </el-card>
+      </el-col>
+    </el-row>
   </d2-container>
 </template>
 
 <script>
 export default {
   components: {
+  },
+  data() {
+    return {
+      currentDate: new Date()
+    }
   }
 }
 </script>

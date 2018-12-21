@@ -51,7 +51,7 @@
         <el-row type="flex" justify="end" class="d2-mb">
           <el-col :span="12" style="text-align:center">
             <video id=myPlayer class="video-js vjs-default-skin" style="width:500px;height:325px;" crossOrigin='anonymous' controls>
-              <source src="http://192.168.9.15/hls/stream.m3u8" type="application/x-mpegURL">
+              <source src="http://localhost:8080/hls/stream.m3u8" type="application/x-mpegURL">
               <p class="vjs-no-js">
                 not support
               </p>

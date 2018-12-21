@@ -33,9 +33,9 @@
         </el-card>
       </div>
       <!-- 快速登录按钮 -->
-      <!-- <el-button type="info" class="button-help" @click="dialogVisible = true">
-        快速选择用户（测试功能）
-      </el-button> -->
+      <el-button type="info" class="button-help" @click="dialogVisible = true">
+        快速选择用户
+      </el-button>
     </div>
     <el-dialog
       title="快速选择用户"
@@ -70,14 +70,14 @@ export default {
           password: 'admin'
         },
         {
-          name: '编辑',
-          username: 'editor',
-          password: 'editor'
+          name: '人事部',
+          username: 'personnel',
+          password: 'personnel'
         },
         {
-          name: '用户1',
-          username: 'user1',
-          password: 'user1'
+          name: '安环部',
+          username: 'security',
+          password: 'security'
         }
       ],
       // 表单

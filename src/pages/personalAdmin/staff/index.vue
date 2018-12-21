@@ -21,16 +21,22 @@
 
 <script>
 import axios from 'axios'
+import { mapState } from 'vuex'
 const addDataUrl = 'http://192.168.9.15:8360/index/addtable'
 const getDataUrl = 'http://192.168.9.15:8360/index/gettable'
 const editDataUrl = 'http://192.168.9.15:8360/index/edittable'
 const deleteDataUrl = 'http://192.168.9.15:8360/index/deletetable'
 const tableType = 'staff'
 export default {
+  computed: {
+    ...mapState('d2admin/user', [
+      'info'
+    ])
+  },
   data () {
-    let validateId = (rule, value, callback) => {
-      this.staffIdSet.has(Number(value)) ? callback(new Error('该工号已存在')) : callback()
-    }
+    // let validateId = (rule, value, callback) => {
+    //   this.staffIdSet.has(Number(value)) ? callback(new Error('该工号已存在')) : callback()
+    // }
     return {
       columns: [
         {
@@ -123,6 +129,10 @@ export default {
           filterPlacement: 'bottom-end'
         },
         {
+          title: '有效工作时间(天)',
+          key: 'work_days'
+        },
+        {
           title: '备注',
           key: 'note'
         }
@@ -145,7 +155,17 @@ export default {
           icon: 'el-icon-delete',
           size: 'small',
           fixed: 'right',
-          confirm: true
+          confirm: true,
+          show (index, row) {
+            // if (this.info.name === '安环部') {
+            //   if (row.working_state === '临时工') {
+            //     return true
+            //   } else {
+            //     return false
+            //   }
+            // }
+            return true
+          }
         }
       },
       addButton: {
@@ -153,10 +173,10 @@ export default {
         size: 'small'
       },
       formTemplate: {
-        // staff_id: {
-        //   title: '工号',
-        //   value: ''
-        // },
+        staff_id: {
+          title: '工号',
+          value: ''
+        },
         name: {
           title: '姓名',
           value: ''
@@ -287,21 +307,26 @@ export default {
             ]
           }
         },
+        work_days: {
+          title: '有效工作时间(天)',
+          value: ''
+        },
         note: {
           title: '备注',
           value: ''
         }
       },
       formOptions: {
-        labelWidth: '80px',
+        labelWidth: '120px',
         labelPosition: 'left',
         saveLoading: false
       },
       formRules: {
         // 员工表
         staff_id: [ { required: true, message: '请输入工号', trigger: 'blur' },
-          { pattern: /^\d+$/, message: '只能输入数字' },
-          { validator: validateId, trigger: 'blur' } ],
+          { pattern: /^\d+$/, message: '只能输入数字' }
+          // { validator: validateId, trigger: 'blur' } // 取消校验工号的单一性，改在新增点击新增按钮的时候校验。
+        ],
         name: [ { required: true, message: '请输入姓名', trigger: 'blur' } ],
         gender: [ { required: true, message: '请选择性别', trigger: 'blur' } ],
         department: [ { required: true, message: '请选择部门', trigger: 'blur' } ],
@@ -323,26 +348,43 @@ export default {
     }
   },
   mounted () {
-    console.log('员工管理 mounted')
+    console.log('员工管理 mounted', this.info.name, this.rowHandle)
+    if(this.info.name === '安环部'){
+      this.rowHandle.remove.disabled = (index, row) => {
+        console.log(row.working_state)
+        if (row.working_state === '临时工') {
+          return false
+        } else {
+          return true
+        }
+      }
+    }
     this.getData()
   },
   methods: {
     handleRowAdd (row, done) {
-      console.log('添加数据')
-      this.formOptions.saveLoading = true
-      setTimeout(() => {
-        console.log(row)
-        this.addData(row)
-        // this.$message({
-        //   message: '保存成功',
-        //   type: 'success'
-        // })
-        done()
-        this.formOptions.saveLoading = false
-      }, 300)
+      console.log('添加数据', row, this.staffIdSet.has(Number(row.staff_id)))
+      if (this.staffIdSet.has(Number(row.staff_id))) { // 已存在该工号
+        this.$alert('该工号已存在', '提示', {
+          confirmButtonText: '确定',
+          type: 'warning'
+        })
+      } else {
+        this.formOptions.saveLoading = true
+        setTimeout(() => {
+          this.addData(row)
+          // this.$message({
+          //   message: '保存成功',
+          //   type: 'success'
+          // })
+          done()
+          this.formOptions.saveLoading = false
+        }, 300)
+      }
     },
     handleRowEdit ({ index, row }, done) {
       console.log('编辑数据')
+      console.log(this.formTemplate)
       this.formOptions.saveLoading = true
       setTimeout(() => {
         console.log(index)
@@ -360,12 +402,24 @@ export default {
       setTimeout(() => {
         console.log(index)
         console.log(row)
-        this.deleteData(row)
+        if (row.working_state === '临时工') {
+          this.deleteData(row)
+          done()
+        } else {
+          if (this.info.name === '安环部') {
+            this.$alert('您没有权限删除正式员工', '提示', {
+              confirmButtonText: '确定',
+              type: 'warning'
+            })
+          } else {
+            this.deleteData(row)
+            done()
+          }
+        }
         // this.$message({
         //   message: '删除成功',
         //   type: 'success'
         // })
-        done()
       }, 300)
     },
     handleDialogCancel (done) {
@@ -398,6 +452,7 @@ export default {
                 post: res.data.data[i].post,
                 telephone: res.data.data[i].telephone,
                 working_state: res.data.data[i].working_state,
+                work_days: res.data.data[i].work_days,
                 note: res.data.data[i].note
               })
             }

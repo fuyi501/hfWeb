@@ -24,8 +24,13 @@ import { frameInRoutes } from '@/router/routes'
 // import 'element-ui/lib/theme-chalk/index.css'
 import D2Crud from '@d2-projects/d2-crud'
 
+// 视频播放
 import VueVideoPlayer from 'vue-video-player'
 Vue.use(VueVideoPlayer)
+
+// 音乐播放
+// import Aplayer from 'vue-aplayer'
+// Vue.use(Aplayer)
 
 // Vue.use(ElementUI)
 Vue.use(D2Crud)

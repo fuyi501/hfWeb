@@ -28,7 +28,7 @@
           >
           </video-player>
           <video id=myPlayer class="video-js vjs-default-skin" style="width:500px;height:325px;" crossOrigin='anonymous' controls>
-            <source src="http://192.168.9.15/hls/stream.m3u8" type="application/x-mpegURL">
+            <source src="http://127.0.0.1:8080/hls/stream.m3u8" type="application/x-mpegURL">
             <p class="vjs-no-js">
               not support
             </p>
@@ -65,11 +65,12 @@ export default {
         aspectRatio: '16:9',
         // 当true时，Video.js player将拥有流体大小。换句话说，它将按比例缩放以适应其容器。
         fluid: true,
-        crossOrigin: 'anonymous',
+        autoplay: true,
+        // crossOrigin: 'anonymous',
         sources: [{
-          crossOrigin: 'anonymous',
+          // crossOrigin: 'anonymous',
           type: 'application/x-mpegURL',
-          src: 'http://192.168.9.15/hls/stream.m3u8'
+          src: 'http://127.0.0.1:8080/hls/stream.m3u8'
         }],
         controlBar: {
           timeDivider: false,
@@ -79,7 +80,8 @@ export default {
         notSupportedMessage: '此视频暂无法播放，请稍后再试' // 允许覆盖Video.js无法播放媒体源时显示的默认信息。
       },
       videoWidth: '',
-      videoHeight: ''
+      videoHeight: '',
+      video: ''
     }
   },
   mounted () {
@@ -92,6 +94,7 @@ export default {
   },
   methods: {
     onPlayerLoadeddata (player) {
+      console.log('加载')
       this.videoWidth = player.videoWidth()
       this.videoHeight = player.videoHeight()
     },

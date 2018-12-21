@@ -8,16 +8,16 @@ const userDB = [
     name: '管理员'
   },
   {
-    username: 'editor',
-    password: 'editor',
-    uuid: 'editor-uuid',
-    name: '编辑'
+    username: 'personnel',
+    password: 'personnel',
+    uuid: 'personnel-uuid',
+    name: '人事部'
   },
   {
-    username: 'user1',
-    password: 'user1',
-    uuid: 'user1-uuid',
-    name: '用户1'
+    username: 'security',
+    password: 'security',
+    uuid: 'security-uuid',
+    name: '安环部'
   }
 ]
 

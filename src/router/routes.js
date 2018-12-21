@@ -18,60 +18,26 @@ const frameIn = [
         meta: { meta, title: '首页' },
         component: () => import('@/pages/index')
       },
-      {
-        path: '/table',
-        name: 'table',
-        component: () => import('@/pages/table'),
-        meta: { meta, title: '上传表格' }
-      },
-      {
-        path: '/table2',
-        name: 'table2',
-        component: () => import('@/pages/table2'),
-        meta: { meta, title: '上传表格' }
-      },
-      {
-        path: '/face',
-        name: 'face',
-        component: () => import('@/pages/face'),
-        meta: { meta, title: '人脸照片上传' }
-      },
-      {
-        path: '/picture',
-        name: 'picture',
-        component: () => import('@/pages/picture'),
-        meta: { meta, title: '照片上传' }
-      },
-      {
-        path: '/photo',
-        name: 'photo',
-        component: () => import('@/pages/photo'),
-        meta: { meta, title: '摄像头拍照' }
-      },
-      {
-        path: '/stream',
-        name: 'stream',
-        component: () => import('@/pages/stream'),
-        meta: { meta, title: '视频流' }
-      },
-      {
-        path: '/stream2',
-        name: 'stream2',
-        component: () => import('@/pages/stream2'),
-        meta: { meta, title: '测试视频流' }
-      },
-      {
-        path: '/staff',
-        name: 'staff',
-        component: () => import('@/pages/staff'),
-        meta: { meta, title: '员工管理' }
-      },
-      {
-        path: '/sche',
-        name: 'sche',
-        component: () => import('@/pages/sche'),
-        meta: { meta, title: '排班表' }
-      }
+      // 人脸识别
+      { path: '/picture', name: 'picture', component: () => import('@/pages/faceRecognition/picture'), meta: { meta, title: '照片上传' } },
+      { path: '/stream', name: 'stream', component: () => import('@/pages/faceRecognition/stream'), meta: { meta, title: '视频流' } },
+      // 人事管理
+      { path: '/table', name: 'table2', component: () => import('@/pages/personalAdmin/table'), meta: { meta, title: '上传表格' } },
+      { path: '/staff', name: 'staff', component: () => import('@/pages/personalAdmin/staff'), meta: { meta, title: '员工管理' } },
+      { path: '/sche', name: 'sche', component: () => import('@/pages/personalAdmin/sche'), meta: { meta, title: '排班表' } },
+      // 测试页面
+      { path: '/areaControl', name: 'areaControl', component: () => import('@/pages/personalAdmin/areaControl'), meta: { meta, title: '区域控制' } },
+      { path: '/table2', name: 'table', component: () => import('@/pages/test/table2'), meta: { meta, title: '上传表格' } },
+      { path: '/face', name: 'face', component: () => import('@/pages/test/face'), meta: { meta, title: '人脸照片上传' } },
+      { path: '/photo', name: 'photo', component: () => import('@/pages/faceRecognition/photo'), meta: { meta, title: '摄像头拍照' } },
+      { path: '/stream2', name: 'stream2', component: () => import('@/pages/test/stream2'), meta: { meta, title: '测试视频流' } },
+      { path: '/stream2/test2', name: 'stream2test2', component: () => import('@/pages/test/stream2/test2.vue'), meta: { meta, title: '测试视频流' } },
+      { path: '/stream2/test3', name: 'stream2test2', component: () => import('@/pages/test/stream2/test3.vue'), meta: { meta, title: '测试视频流' } },
+      { path: '/stream2/test4', name: 'stream2test2', component: () => import('@/pages/test/stream2/test4.vue'), meta: { meta, title: '测试视频流' } },
+      { path: '/stream2/testbaidu', name: 'stream2testbaidu', component: () => import('@/pages/test/stream2/testbaidu.vue'), meta: { meta, title: '测试视频流' } },
+      { path: '/audio', name: 'audio', component: () => import('@/pages/test/audio'), meta: { meta, title: '语音报警' } },
+      // 设置
+      { path: '/alarmSetting', name: 'alarmSetting', component: () => import('@/pages/setting/alarmSetting'), meta: { meta, title: '报警设置' } }
     ]
   }
 ]
