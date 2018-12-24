@@ -23,7 +23,7 @@ export default {
   methods: {
     handleClick () {
       // this.$emit('input', !this.value)
-      this.$emit('input', this.value === 1 ? 0 : 1)
+      // this.$emit('input', this.value === 1 ? 0 : 1)
       console.log(this.value)
     }
   }

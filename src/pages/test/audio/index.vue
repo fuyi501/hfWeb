@@ -10,7 +10,7 @@
             <el-col ><el-button type="danger" size="mini" @click="openClose">全部关闭</el-button></el-col>
             <!-- <el-col ><el-button type="success" size="mini" @click="openClose">确认报警项</el-button></el-col> -->
           </el-row>
-          <el-form
+          <!-- <el-form
             ref="alarmForm"
             :model="alarmForm"
             label-width="200px"
@@ -51,6 +51,15 @@
             <el-form-item label="原料大罐区主干道">
               <el-switch v-model="alarmForm.Tank_main" @change="changeSwitch" active-text="开启报警" inactive-text="关闭报警" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
             </el-form-item>
+          </el-form> -->
+          <el-form
+            ref="alarmData"
+            :model="alarmData"
+            label-width="200px"
+            :label-position="labelPosition">
+            <el-form-item :label="(index+1) + ' ' + item.ch_name" size="medium" v-for="(item, index) in alarmData.data" v-bind:key="item.id">
+              <el-switch v-model="item.is_alarm" @change="changeSwitch2(item)" active-text="开启报警" inactive-text="关闭报警" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+            </el-form-item>
           </el-form>
         </el-col>
         <el-col :span="12" style="width:580px;">
@@ -77,6 +86,9 @@
 import Aplayer from 'vue-aplayer'
 import axios from 'axios'
 import dayjs from 'dayjs'
+import Vue from 'vue'
+const getAudioInfo = 'http://192.168.9.15:8360/audio/getaudio'
+const editDataUrl = 'http://192.168.9.15:8360/audio/editaudio'
 const getAudio = 'http://192.168.9.15:8360/audio/playaudio'
 export default {
   components: {
@@ -95,38 +107,42 @@ export default {
         //   pic: './image/index.png'
         // }
       ],
-      alarmForm: {
-        Fnorth: true, // 一车间一楼北楼梯间
-        Fsouth: true, // 一车间一楼南楼梯间
-        Gate: true, // 大门
-        Lab: true, // 实验楼
-        Main_road: true, // 盐酸小罐区主干道
-        SWJTU: true, // 西南交大9423实验室
-        Sleft: true, // 二车间一楼左侧楼梯口
-        Sright: true, // 二车间一楼右侧楼梯口
-        Tank_eight: true, // 原料大罐区8号罐
-        Tank_four: true, // 原料大罐区4号罐
-        Tank_jl: true, // 原料大罐区靠金陵路
-        Tank_main: true // 原料大罐区主干道
+      alarmData: {
+        data: []
       },
+      // alarmForm: {
+      //   Fnorth: true, // 一车间一楼北楼梯间
+      //   Fsouth: true, // 一车间一楼南楼梯间
+      //   Gate: true, // 大门
+      //   Lab: true, // 实验楼
+      //   Main_road: true, // 盐酸小罐区主干道
+      //   SWJTU: true, // 西南交大9423实验室
+      //   Sleft: true, // 二车间一楼左侧楼梯口
+      //   Sright: true, // 二车间一楼右侧楼梯口
+      //   Tank_eight: true, // 原料大罐区8号罐
+      //   Tank_four: true, // 原料大罐区4号罐
+      //   Tank_jl: true, // 原料大罐区靠金陵路
+      //   Tank_main: true // 原料大罐区主干道
+      // },
       alarmString: ['Fnorth', 'Fsouth', 'Gate', 'Lab', 'Main_road', 'SWJTU', 'Sleft', 'Sright', 'Tank_eight', 'Tank_four', 'Tank_jl', 'Tank_main'],
       labelPosition: 'left'
     }
   },
   mounted () {
     console.log('音频 mounted')
-    this.getData(this.alarmString)
+    this.getAudioInfo()
+    // this.getData(this.alarmString)
   },
   methods: {
     openAll () {
       console.log('打开所有')
-      for (let key in this.alarmForm) {
-        this.alarmForm[key] = true
+      for (let i in this.alarmData.data) {
+        this.alarmData.data[i].is_alarm = true
       }
       this.alarmString = []
-      for (let key in this.alarmForm) {
-        if (this.alarmForm[key]) {
-          this.alarmString.push(key)
+      for (let i in this.alarmData.data) {
+        if (this.alarmData.data[i].is_alarm) {
+          this.alarmString.push(this.alarmData.data[i].en_name)
         }
       }
       console.log(this.alarmString)
@@ -135,8 +151,8 @@ export default {
     },
     openClose () {
       console.log('关闭所有')
-      for (let key in this.alarmForm) {
-        this.alarmForm[key] = false
+      for (let i in this.alarmData.data) {
+        this.alarmData.data[i].is_alarm = false
       }
       this.flag = false
     },
@@ -151,6 +167,76 @@ export default {
       console.log(this.alarmString)
       this.flag = false
       this.getData(this.alarmString)
+    },
+    changeSwitch2 (item) {
+      // 切换这里会出现问题，flase 的时候打不开 true ，实际上是因为 js 传递的是引用，
+      // data.is_alarm = Number(data.is_alarm) 这句话将 布尔值变为数字时 影响了 this.alarmData.data 真正的值
+      // 解决办法就是 修改了之后，再在 this.editAudioData() 方法中修改一次 data.is_alarm = Boolean(data.is_alarm)
+      // 考虑再三，还是后台修改比较好。
+      console.log('切换：', item, Number(item.is_alarm), this.alarmData.data[item.id-1])
+
+      // setTimeout(() => {
+        this.alarmString = []
+        for (let i in this.alarmData.data) {
+          if (this.alarmData.data[i].is_alarm) {
+            this.alarmString.push(this.alarmData.data[i].en_name)
+          }
+        }
+        console.log(this.alarmString)
+        this.flag = false
+        this.getData(this.alarmString)
+        this.editAudioData(item)
+      // }, 300)
+      
+    },
+    getAudioInfo () {
+      console.log('查询报警数据')
+      this.alarmString = []
+      axios.get(getAudioInfo)
+        .then((res) => {
+          console.log(res)
+          if (res.data.errno === 0) {
+            for (let i in res.data.data) {
+              // this.alarmData.data.push({
+              //   id: res.data.data[i].id,
+              //   en_name: res.data.data[i].en_name,
+              //   ch_name: res.data.data[i].ch_name,
+              //   is_alarm: Boolean(res.data.data[i].is_alarm),
+              //   note: res.data.data[i].note
+              // })
+
+              Vue.set( //这样就能被vue监控到，更新视图
+                this.alarmData.data,
+                i,
+                {
+                  id: res.data.data[i].id,
+                  en_name: res.data.data[i].en_name,
+                  ch_name: res.data.data[i].ch_name,
+                  is_alarm: Boolean(res.data.data[i].is_alarm),
+                  note: res.data.data[i].note
+                })
+
+              // 判断哪些设置了报警
+              if (res.data.data[i].is_alarm) {
+                this.alarmString.push(res.data.data[i].en_name)
+              }
+            }
+            console.log('获取的数据：', this.alarmData.data, this.alarmString)
+            this.getData(this.alarmString)
+            this.$notify({
+              title: '获取成功',
+              type: 'success'
+            })
+          } else {
+            this.$notify.error({
+              title: '获取失败',
+              message: res.data.errmsg
+            })
+          }
+        })
+        .catch(function (err) {
+          console.log(err)
+        })
     },
     getData (alarmString) {
       alarmString = alarmString.join(',')
@@ -182,7 +268,7 @@ export default {
             this.flag = true
           } else {
             this.$notify.error({
-              title: '获取失败',
+              title: '没有数据',
               message: res.data.errmsg
             })
           }
@@ -190,6 +276,36 @@ export default {
         .catch(function (err) {
           console.log(err)
         })
+    },
+    // 更改报警设置
+    editAudioData (data) {
+      console.log('编辑更新数据', data)
+      // 后台修改这个值
+      // data.is_alarm = Number(data.is_alarm)
+      console.log('编辑更新数据', this.alarmData.data[data.id-1])
+      axios.post(editDataUrl, {
+        audioData: data
+      })
+        .then((res) => {
+          console.log(res)
+          if (res.data.errno === 0) {
+            // 后台修改这个值
+            // data.is_alarm = Boolean(data.is_alarm)
+            this.$notify({
+              title: '编辑成功',
+              type: 'success'
+            })
+          } else {
+            this.$notify.error({
+              title: '编辑失败',
+              message: res.data.errmsg
+            })
+          }
+        })
+        .catch(function (err) {
+          console.log(err)
+        })
+
     }
   }
 }

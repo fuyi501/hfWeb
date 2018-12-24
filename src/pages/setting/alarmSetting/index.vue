@@ -20,6 +20,7 @@
 
 <script>
 import MyTag from './MyTag'
+import MyTag2 from './MyTag2'
 import axios from 'axios'
 import dayjs from 'dayjs'
 const addDataUrl = 'http://192.168.9.15:8360/audio/addaudio'
@@ -35,26 +36,31 @@ export default {
       columns: [
         {
           title: '序号',
-          key: 'id'
+          key: 'id',
+          // width: '80'
         },
         {
           title: '英文简称',
-          key: 'en_name'
+          key: 'en_name',
+          // width: '140'
         },
         {
           title: '中文名称',
-          key: 'ch_name'
+          key: 'ch_name',
+          // width: '200'
         },
         {
           title: '是否报警',
           key: 'is_alarm',
+          // width: '100',
           component: {
-            name: MyTag
+            name: MyTag2
           }
         },
         {
           title: '备注',
-          key: 'note'
+          key: 'note',
+          // width: '200'
         }
       ],
       data: [],
@@ -79,7 +85,8 @@ export default {
       },
       addButton: {
         icon: 'el-icon-plus',
-        size: 'small'
+        size: 'medium',
+        type: 'primary'
       },
       formTemplate: {
         id: {
