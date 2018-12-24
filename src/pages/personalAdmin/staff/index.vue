@@ -349,7 +349,7 @@ export default {
   },
   mounted () {
     console.log('员工管理 mounted', this.info.name, this.rowHandle)
-    if(this.info.name === '安环部'){
+    if (this.info.name === '安环部') {
       this.rowHandle.remove.disabled = (index, row) => {
         console.log(row.working_state)
         if (row.working_state === '临时工') {

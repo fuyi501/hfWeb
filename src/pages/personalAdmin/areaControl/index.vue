@@ -171,16 +171,15 @@ export default {
           console.log(res)
           if (res.status === 200) {
             for (let i in res.data) {
-
-              Vue.set( //这样就能被vue监控到，更新视图
+              Vue.set( // 这样就能被vue监控到，更新视图
                 this.areaRoad,
                 res.data[i].area_name,
-                { 
+                {
                   area_name: res.data[i].area_name,
                   ch_name: res.data[i].ch_name,
                   is_forbidden: res.data[i].isforbidden
                 })
-              // 下面这种获取到的数据不会被 vue 监听到，修改里面的值不会更新视图 
+              // 下面这种获取到的数据不会被 vue 监听到，修改里面的值不会更新视图
               // this.areaRoad[res.data[i].area_name] = {
               //   area_name: res.data[i].area_name,
               //   ch_name: res.data[i].ch_name,
@@ -266,7 +265,7 @@ export default {
   vertical-align:middle;
   padding: 115px 0px;
 }
-.area-text160 { // 
+.area-text160 {
   text-align:center;
   vertical-align:middle;
   padding: 45px 0px;

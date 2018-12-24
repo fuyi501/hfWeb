@@ -173,21 +173,18 @@ export default {
       // data.is_alarm = Number(data.is_alarm) 这句话将 布尔值变为数字时 影响了 this.alarmData.data 真正的值
       // 解决办法就是 修改了之后，再在 this.editAudioData() 方法中修改一次 data.is_alarm = Boolean(data.is_alarm)
       // 考虑再三，还是后台修改比较好。
-      console.log('切换：', item, Number(item.is_alarm), this.alarmData.data[item.id-1])
-
-      // setTimeout(() => {
-        this.alarmString = []
-        for (let i in this.alarmData.data) {
-          if (this.alarmData.data[i].is_alarm) {
-            this.alarmString.push(this.alarmData.data[i].en_name)
-          }
+      console.log('切换：', item, Number(item.is_alarm), this.alarmData.data[item.id - 1])
+      // setTimeout(() => {}, 300)
+      this.alarmString = []
+      for (let i in this.alarmData.data) {
+        if (this.alarmData.data[i].is_alarm) {
+          this.alarmString.push(this.alarmData.data[i].en_name)
         }
-        console.log(this.alarmString)
-        this.flag = false
-        this.getData(this.alarmString)
-        this.editAudioData(item)
-      // }, 300)
-      
+      }
+      console.log(this.alarmString)
+      this.flag = false
+      this.getData(this.alarmString)
+      this.editAudioData(item)
     },
     getAudioInfo () {
       console.log('查询报警数据')
@@ -205,7 +202,7 @@ export default {
               //   note: res.data.data[i].note
               // })
 
-              Vue.set( //这样就能被vue监控到，更新视图
+              Vue.set( // 这样就能被vue监控到，更新视图
                 this.alarmData.data,
                 i,
                 {
@@ -282,7 +279,7 @@ export default {
       console.log('编辑更新数据', data)
       // 后台修改这个值
       // data.is_alarm = Number(data.is_alarm)
-      console.log('编辑更新数据', this.alarmData.data[data.id-1])
+      console.log('编辑更新数据', this.alarmData.data[data.id - 1])
       axios.post(editDataUrl, {
         audioData: data
       })
@@ -305,7 +302,6 @@ export default {
         .catch(function (err) {
           console.log(err)
         })
-
     }
   }
 }

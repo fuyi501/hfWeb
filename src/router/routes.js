@@ -30,11 +30,7 @@ const frameIn = [
       { path: '/table2', name: 'table', component: () => import('@/pages/test/table2'), meta: { meta, title: '上传表格' } },
       { path: '/face', name: 'face', component: () => import('@/pages/test/face'), meta: { meta, title: '人脸照片上传' } },
       { path: '/photo', name: 'photo', component: () => import('@/pages/faceRecognition/photo'), meta: { meta, title: '摄像头拍照' } },
-      { path: '/stream2', name: 'stream2', component: () => import('@/pages/test/stream2'), meta: { meta, title: '测试视频流' } },
       { path: '/stream2/test2', name: 'stream2test2', component: () => import('@/pages/test/stream2/test2.vue'), meta: { meta, title: '测试视频流' } },
-      { path: '/stream2/test3', name: 'stream2test2', component: () => import('@/pages/test/stream2/test3.vue'), meta: { meta, title: '测试视频流' } },
-      { path: '/stream2/test4', name: 'stream2test2', component: () => import('@/pages/test/stream2/test4.vue'), meta: { meta, title: '测试视频流' } },
-      { path: '/stream2/testbaidu', name: 'stream2testbaidu', component: () => import('@/pages/test/stream2/testbaidu.vue'), meta: { meta, title: '测试视频流' } },
       { path: '/audio', name: 'audio', component: () => import('@/pages/test/audio'), meta: { meta, title: '语音报警' } },
       // 设置
       { path: '/alarmSetting', name: 'alarmSetting', component: () => import('@/pages/setting/alarmSetting'), meta: { meta, title: '报警设置' } }
