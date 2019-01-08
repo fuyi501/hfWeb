@@ -2,8 +2,8 @@
   <d2-container >
     <template slot="header">语音报警</template>
     <div class="d2-mb">
-      <el-row style="margin-left:0px;">
-        <el-col :span="12" style="width:560px;">
+      <el-row style="margin-left:0px;" :gutter="20">
+        <el-col :span="10" style="width:440px;">
           <el-row style="height: 63px; width: 300px;" type="flex" align="middle" :gutter="10">
             <el-col ><div class="settingFont">报警设置</div></el-col>
             <el-col ><el-button type="primary" size="mini" @click="openAll">全部开启</el-button></el-col>
@@ -62,9 +62,11 @@
             </el-form-item>
           </el-form>
         </el-col>
-        <el-col :span="12" style="width:580px;">
+        <el-col :span="10" style="width:540px;">
           <h3>报警列表</h3>
           <aplayer
+            ref="Aplayer"
+            @play="paly"
             autoplay
             v-if="flag"
             listMaxHeight='430px'
@@ -76,6 +78,11 @@
             :music='list3[0]'
             :list='list3'
           />
+        </el-col>
+        <el-col :span="4" style="margin-left:20px;">
+          <h3>事件大图</h3>
+          <img :src="bigpic" style="width:533px;height:300px;" class="image">
+          <p>{{ evenTitle }}</p>
         </el-col>
       </el-row>
     </div>
@@ -99,6 +106,7 @@ export default {
       flag: false,
       volume: 1, // 音量
       muted: false, // 静音
+      bigImgInfo: [],
       list3: [
         // {
         //   title: '实验楼员工未戴安全帽',
@@ -125,7 +133,9 @@ export default {
       //   Tank_main: true // 原料大罐区主干道
       // },
       alarmString: ['Fnorth', 'Fsouth', 'Gate', 'Lab', 'Main_road', 'SWJTU', 'Sleft', 'Sright', 'Tank_eight', 'Tank_four', 'Tank_jl', 'Tank_main'],
-      labelPosition: 'left'
+      labelPosition: 'left',
+      bigpic: './image/index.png',
+      evenTitle: ''
     }
   },
   mounted () {
@@ -134,6 +144,18 @@ export default {
     // this.getData(this.alarmString)
   },
   methods: {
+    paly () {
+      console.log('开始播放')
+      console.log(this.$refs.Aplayer.currentMusic)
+      let info = this.$refs.Aplayer.currentMusic
+      for (let item of this.bigImgInfo) {
+        if (item.small_picture === info.pic) {
+          console.log(item)
+          this.bigpic = item.big_picture
+          this.evenTitle = item.title
+        }
+      }
+    },
     openAll () {
       console.log('打开所有')
       for (let i in this.alarmData.data) {
@@ -253,7 +275,14 @@ export default {
                 title: res.data[i].text,
                 artist: dayjs(res.data[i].time).format('YYYY-MM-DD HH:mm:ss'),
                 src: res.data[i].src,
-                pic: './image/index.png'
+                pic: res.data[i].small_picture
+              })
+              this.bigImgInfo.push({
+                title: res.data[i].text,
+                artist: dayjs(res.data[i].time).format('YYYY-MM-DD HH:mm:ss'),
+                src: res.data[i].src,
+                big_picture: res.data[i].big_picture,
+                small_picture: res.data[i].small_picture
               })
             }
             this.$notify({

@@ -21,6 +21,7 @@
 
 <script>
 import axios from 'axios'
+import MyTag2 from './MyTag2'
 import { mapState } from 'vuex'
 const addDataUrl = 'http://192.168.9.15:8360/index/addtable'
 const getDataUrl = 'http://192.168.9.15:8360/index/gettable'
@@ -129,11 +130,14 @@ export default {
           filterPlacement: 'bottom-end'
         },
         {
-          title: '有效工作时间(天)',
-          key: 'work_days'
+          title: '是否已录入人脸',
+          key: 'photo_name',
+          component: {
+            name: MyTag2
+          }
         },
         {
-          title: '备注',
+          title: '有效工作时间(天)',
           key: 'note'
         }
       ],
@@ -307,12 +311,12 @@ export default {
             ]
           }
         },
-        work_days: {
-          title: '有效工作时间(天)',
+        photo_name: {
+          title: '是否已录入人脸',
           value: ''
         },
         note: {
-          title: '备注',
+          title: '有效工作时间(天)',
           value: ''
         }
       },
@@ -450,10 +454,10 @@ export default {
                 team: res.data.data[i].team,
                 workshop: res.data.data[i].workshop,
                 post: res.data.data[i].post,
-                telephone: res.data.data[i].telephone,
+                telephone: res.data.data[i].telephone === '' || res.data.data[i].telephone === 'null' ? '' : res.data.data[i].telephone,
                 working_state: res.data.data[i].working_state,
-                work_days: res.data.data[i].work_days,
-                note: res.data.data[i].note
+                photo_name: res.data.data[i].photo_name,
+                note: res.data.data[i].note === '' || res.data.data[i].note === 'null' ? '' : res.data.data[i].note
               })
             }
             this.$notify({

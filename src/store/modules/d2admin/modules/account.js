@@ -28,6 +28,7 @@ export default {
         password
       })
         .then(res => {
+          res = res.data.data
           console.log('登录结果：', res)
           // 设置 cookie 一定要存 uuid 和 token 两个 cookie
           // 整个系统依赖这两个数据进行校验和存储
@@ -35,7 +36,9 @@ export default {
           // token 代表用户当前登录状态 建议在网络请求中携带 token
           // 如有必要 token 需要定时更新，默认保存一天
           util.cookies.set('uuid', res.uuid)
-          util.cookies.set('token', res.token)
+          util.cookies.set('token', res.token, {
+            expires: 1
+          })
           // 设置 vuex 用户信息
           commit('d2admin/user/set', {
             name: res.name

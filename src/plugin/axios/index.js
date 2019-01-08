@@ -40,14 +40,16 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   config => {
+    console.log('请求拦截器config:', config)
     // 在请求发送之前做一些处理
-    if (!(/^https:\/\/|http:\/\//.test(config.url))) {
+    // if (!(/^https:\/\/|http:\/\//.test(config.url))) {
       const token = util.cookies.get('token')
+      console.log('请求拦截器token:', token)
       if (token && token !== 'undefined') {
         // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
-        config.headers['X-Token'] = token
+        config.headers['Authorization'] = token
       }
-    }
+    // }
     return config
   },
   error => {
@@ -60,6 +62,7 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
   response => {
+    console.log('响应拦截器response', response)
     // dataAxios 是 axios 返回数据中的 data
     const dataAxios = response.data
     // 这个状态码是和后端约定的

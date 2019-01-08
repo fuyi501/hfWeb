@@ -20,6 +20,7 @@ const router = new VueRouter({
  * 权限验证
  */
 router.beforeEach((to, from, next) => {
+  console.log('这里是路由拦截, 权限验证的开始', to , next)
   // 关闭搜索面板
   store.commit('d2admin/search/set', false)
   // 验证当前路由所有的匹配中是否需要有登录验证的
@@ -27,6 +28,9 @@ router.beforeEach((to, from, next) => {
     // 这里暂时将cookie里是否存有token作为验证是否登录的条件
     // 请根据自身业务需要修改
     const token = util.cookies.get('token')
+
+    console.log('路由拦截, 权限验证', token)
+
     if (token && token !== 'undefined') {
       next()
     } else {
@@ -45,6 +49,7 @@ router.beforeEach((to, from, next) => {
 })
 
 router.afterEach(to => {
+  console.log('路由拦截, 权限验证')
   // 需要的信息
   const app = router.app
   const { name, params, query } = to

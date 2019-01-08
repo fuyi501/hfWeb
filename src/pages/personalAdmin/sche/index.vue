@@ -21,6 +21,8 @@
 <script>
 import axios from 'axios'
 import dayjs from 'dayjs'
+import { httpGet, httpPost } from '@/api/sys/http'
+
 const addDataUrl = 'http://192.168.9.15:8360/index/addtable'
 const getDataUrl = 'http://192.168.9.15:8360/index/gettable'
 const editDataUrl = 'http://192.168.9.15:8360/index/edittable'
@@ -249,25 +251,28 @@ export default {
       done()
     },
     getData () {
-      console.log('查询数据')
-      axios.get(getDataUrl, {
-        params: {
+      console.log('排班表查询数据')
+      httpGet(getDataUrl, {
           type: 'sche'
-        }
-      })
+        })
+      // axios.get(getDataUrl, {
+      //   params: {
+      //     type: 'sche'
+      //   }
+      // })
         .then((res) => {
-          console.log(res)
-          if (res.data.errno === 0) {
-            for (let i in res.data.data) {
+          console.log('请求的结果：', res)
+          if (res.errno === 0) {
+            for (let i in res.data) {
               this.data.push({
-                t_id: res.data.data[i].t_id,
-                date: dayjs(res.data.data[i].date).format('YYYY-MM-DD'),
-                team: res.data.data[i].team,
-                begin_time: res.data.data[i].begin_time,
-                end_time: res.data.data[i].end_time,
+                t_id: res.data[i].t_id,
+                date: dayjs(res.data[i].date).format('YYYY-MM-DD'),
+                team: res.data[i].team,
+                begin_time: res.data[i].begin_time,
+                end_time: res.data[i].end_time,
                 // begin_time: dayjs(res.data.data[i].date + ' ' + res.data.data[i].begin_time).format('HH:mm:ss'),
                 // end_time: dayjs(res.data.data[i].date + ' ' + res.data.data[i].end_time).format('HH:mm:ss'),
-                note: res.data.data[i].note
+                note: res.data[i].note
               })
             }
             this.$notify({
@@ -277,7 +282,7 @@ export default {
           } else {
             this.$notify.error({
               title: '获取失败',
-              message: res.data.errmsg
+              message: res.errmsg
             })
           }
         })
