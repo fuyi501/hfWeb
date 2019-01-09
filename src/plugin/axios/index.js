@@ -40,7 +40,7 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   config => {
-    console.log('请求拦截器config:', config)
+    // console.log('请求拦截器config:', config)
     // 在请求发送之前做一些处理
     // if (!(/^https:\/\/|http:\/\//.test(config.url))) {
       const token = util.cookies.get('token')
@@ -65,6 +65,30 @@ service.interceptors.response.use(
     console.log('响应拦截器response', response)
     // dataAxios 是 axios 返回数据中的 data
     const dataAxios = response.data
+    // console.log('dataAxios:', dataAxios)
+    const { errno } = dataAxios
+    if(errno !== undefined) {
+      console.log('errno:', errno)
+      // 有 code 代表这是一个后端接口 可以进行进一步的判断
+      switch (errno) {
+        case 0:
+          // [ 示例 ] code === 0 代表没有错误
+          return dataAxios
+        case 10010:
+          // token过期
+          console.log('token过期')
+          // errorCreat(`[ code: xxx ] ${dataAxios.errmsg}: ${response.config.url}`)
+          // token过期后，直接删除 token 就可以，然后在路由拦截里判断是否还有 token ，没有token就跳转到登录页面。
+          util.cookies.remove('token')
+          util.cookies.remove('uuid')
+          break
+        default:
+          // 不是正确的 code
+          errorCreat(`${dataAxios.errmsg}: ${response.config.url}`)
+          break
+      }
+    }
+
     // 这个状态码是和后端约定的
     const { code } = dataAxios
     // 根据 code 进行判断

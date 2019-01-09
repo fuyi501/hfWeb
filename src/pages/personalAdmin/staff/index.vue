@@ -15,12 +15,15 @@
       @row-edit="handleRowEdit"
       @row-remove="handleRowRemove"
       @dialog-cancel="handleDialogCancel"
-      :options="options"/>
+      :options="options">
+      <el-button slot="header" type="primary" round style="margin-left: 5px">自定义按钮1</el-button>
+    </d2-crud>
   </d2-container>
 </template>
 
 <script>
 import axios from 'axios'
+import { httpGet, httpPost } from '@/api/sys/http'
 import MyTag2 from './MyTag2'
 import { mapState } from 'vuex'
 const addDataUrl = 'http://192.168.9.15:8360/index/addtable'
@@ -132,6 +135,7 @@ export default {
         {
           title: '是否已录入人脸',
           key: 'photo_name',
+          width: '170',
           component: {
             name: MyTag2
           }
@@ -440,8 +444,11 @@ export default {
           type: tableType
         }
       })
+      // httpGet(getDataUrl, {
+      //   type: tableType
+      // })
         .then((res) => {
-          console.log(res)
+          console.log('员工管理数据：', res)
           if (res.data.errno === 0) {
             this.staffIdSet = new Set()
             for (let i in res.data.data) {

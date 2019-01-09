@@ -23,8 +23,8 @@ const frameIn = [
       { path: '/stream', name: 'stream', component: () => import('@/pages/faceRecognition/stream'), meta: { meta, title: '视频流' } },
       // 人事管理
       { path: '/table', name: 'table2', component: () => import('@/pages/personalAdmin/table'), meta: { meta, title: '上传表格' } },
-      { path: '/staff', name: 'staff', component: () => import('@/pages/personalAdmin/staff'), meta: { meta, title: '员工管理' } },
-      { path: '/sche', name: 'sche', component: () => import('@/pages/personalAdmin/sche'), meta: { meta, title: '排班表' } },
+      { path: '/staff', name: 'staff', component: () => import('@/pages/personalAdmin/staff'), meta: { requiresAuth: true, title: '员工管理' } },
+      { path: '/sche', name: 'sche', component: () => import('@/pages/personalAdmin/sche'), meta: { requiresAuth: true, title: '排班表' } },
       // 测试页面
       { path: '/areaControl', name: 'areaControl', component: () => import('@/pages/personalAdmin/areaControl'), meta: { meta, title: '区域控制' } },
       { path: '/table2', name: 'table', component: () => import('@/pages/test/table2'), meta: { meta, title: '上传表格' } },
