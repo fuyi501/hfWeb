@@ -14,7 +14,9 @@
       @row-add="handleRowAdd"
       @row-edit="handleRowEdit"
       @row-remove="handleRowRemove"
-      @dialog-cancel="handleDialogCancel"/>
+      @dialog-cancel="handleDialogCancel"
+      selection-row
+      @selection-change="handleSelectionChange"/>
   </d2-container>
 </template>
 
@@ -361,6 +363,9 @@ export default {
         .catch(function (err) {
           console.log(err)
         })
+    },
+    handleSelectionChange (selection) {
+      console.log('多选：', selection)
     }
   }
 }

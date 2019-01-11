@@ -1,6 +1,40 @@
 <template>
   <d2-container>
+    <template slot="header">
+      <p>删除员工的数据之后，请点击<strong> 更新人脸库按钮 </strong>进行更新，更新大概需要<strong> 40秒 </strong>时间，请耐心等待！</p>
+      <el-row>
+        <el-col>
+          <el-form 
+            :inline="true" 
+            :model="searchInfo" 
+            size="mini"
+            class="demo-form-inline">
+            <el-form-item label="工号">
+              <el-input v-model="searchInfo.staff_id" placeholder="工号"></el-input>
+            </el-form-item>
+            <el-form-item label="姓名">
+              <el-input v-model="searchInfo.name" placeholder="姓名"></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="searchStaffInfo"><d2-icon name="search"/> 查询</el-button>
+            </el-form-item>
+            <el-form-item>
+              <el-button @click="refreshStaffInfo"><d2-icon name="refresh"/> 重置</el-button>
+            </el-form-item>
+            <el-form-item>
+              <el-button @click="deleteStaffInfo" type="danger"><d2-icon name="trash"/> 批量删除</el-button>
+            </el-form-item>
+            <el-form-item>
+              <el-button @click="updateFace2" type="danger" v-loading.fullscreen.lock="loading"><d2-icon name="refresh"/> 更新人脸库</el-button>
+            </el-form-item>
+          </el-form>
+        </el-col>
+      </el-row>
+      
+      
+    </template>
     <d2-crud
+      ref="d2Crud"
       :columns="columns"
       :data="data"
       title="员工管理"
@@ -15,8 +49,9 @@
       @row-edit="handleRowEdit"
       @row-remove="handleRowRemove"
       @dialog-cancel="handleDialogCancel"
-      :options="options">
-      <el-button slot="header" type="primary" round style="margin-left: 5px">自定义按钮1</el-button>
+      :options="options"
+      selection-row
+      @selection-change="handleSelectionChange">
     </d2-crud>
   </d2-container>
 </template>
@@ -26,6 +61,9 @@ import axios from 'axios'
 import { httpGet, httpPost } from '@/api/sys/http'
 import MyTag2 from './MyTag2'
 import { mapState } from 'vuex'
+const updateFaceUrl = 'http://192.168.9.15:8360/img/updateface' // 更新人脸库
+const searchStaffInfoUrl = 'http://192.168.9.15:8360/staff/search' // 查询员工信息
+const deleteStaffInfoUrl = 'http://192.168.9.15:8360/staff/deletemanystaffinfo' // 批量删除员工信息
 const addDataUrl = 'http://192.168.9.15:8360/index/addtable'
 const getDataUrl = 'http://192.168.9.15:8360/index/gettable'
 const editDataUrl = 'http://192.168.9.15:8360/index/edittable'
@@ -42,6 +80,10 @@ export default {
     //   this.staffIdSet.has(Number(value)) ? callback(new Error('该工号已存在')) : callback()
     // }
     return {
+      searchInfo: {
+        staff_id: '',
+        name: ''
+      },
       columns: [
         {
           title: '工号',
@@ -178,7 +220,8 @@ export default {
       },
       addButton: {
         icon: 'el-icon-plus',
-        size: 'small'
+        size: 'small',
+        type: 'primary'
       },
       formTemplate: {
         staff_id: {
@@ -352,7 +395,10 @@ export default {
             return ''
           }
         }
-      }
+      },
+      loading: false, // 更新人脸库时的加载动画
+      selectionRow: false,
+      deleteManyInfo: [] // 要批量删除的员工信息
     }
   },
   mounted () {
@@ -411,6 +457,7 @@ export default {
         console.log(index)
         console.log(row)
         if (row.working_state === '临时工') {
+          this.staffIdSet.delete(row.staff_id) // 从员工集合中删除 员工id
           this.deleteData(row)
           done()
         } else {
@@ -420,6 +467,7 @@ export default {
               type: 'warning'
             })
           } else {
+            this.staffIdSet.delete(row.staff_id) // 从员工集合中删除 员工id
             this.deleteData(row)
             done()
           }
@@ -450,6 +498,7 @@ export default {
         .then((res) => {
           console.log('员工管理数据：', res)
           if (res.data.errno === 0) {
+            this.data = []
             this.staffIdSet = new Set()
             for (let i in res.data.data) {
               this.staffIdSet.add(res.data.data[i].staff_id)
@@ -553,12 +602,158 @@ export default {
         .catch(function (err) {
           console.log(err)
         })
+    },
+    updateFace2 () {
+			this.$confirm('确定要更新人脸库么？', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				this.updateFace()
+			}).catch(()=>{
+				console.log('取消')
+			})
+		},
+		updateFace () {
+			console.log('更新人脸库')
+      this.loading = true
+      setTimeout(() => {
+        if (this.loading) {
+          this.loading = false
+          this.$alert('更新失败, 请再次点击更新人脸库', '提示', {
+            confirmButtonText: '确定',
+            type: 'warning'
+          })
+        }
+      }, 45000)
+      
+      axios.post(updateFaceUrl, {
+        updateStaffInfo: [],
+        type: 'delete'
+      })
+        .then((res) => {
+          console.log(res)
+          if (res.data.data.code === 2000) {
+            this.loading = false
+            this.$notify({
+              title: '更新成功',
+              type: 'success'
+            })
+          } else if (res.data.data.code === 2002) {
+            this.$alert('更新失败', '提示', {
+              confirmButtonText: '确定',
+              type: 'warning'
+            })
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+    // 查询按钮
+    searchStaffInfo () {
+      console.log('查询员工信息')
+      axios.post(searchStaffInfoUrl, {
+        staffInfo: this.searchInfo
+      })
+        .then((res) => {
+          console.log('查询员工信息', res)
+          if (res.data.errno === 0) {
+            this.data = []
+            for (let i in res.data.data) {
+              this.data.push({
+                staff_id: res.data.data[i].staff_id,
+                name: res.data.data[i].name,
+                gender: res.data.data[i].gender,
+                department: res.data.data[i].department,
+                team: res.data.data[i].team,
+                workshop: res.data.data[i].workshop,
+                post: res.data.data[i].post,
+                telephone: res.data.data[i].telephone === '' || res.data.data[i].telephone === 'null' ? '' : res.data.data[i].telephone,
+                working_state: res.data.data[i].working_state,
+                photo_name: res.data.data[i].photo_name,
+                note: res.data.data[i].note === '' || res.data.data[i].note === 'null' ? '' : res.data.data[i].note
+              })
+            }
+            this.$notify({
+              title: '获取成功',
+              type: 'success'
+            })
+          } else {
+            this.$notify.error({
+              title: '获取失败',
+              message: res.data.errmsg
+            })
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+    // 重置按钮 
+    refreshStaffInfo () {
+      console.log('重置按钮')
+      this.getData()
+    },
+    // 批量删除按钮
+    deleteStaffInfo () {
+      if(this.deleteManyInfo.length > 0) {
+        this.$confirm('确定删除这些员工的信息吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          console.log('批量删除员工信息')
+          axios.post(deleteStaffInfoUrl, {
+            deleteStaffInfo: this.deleteManyInfo
+          })
+            .then((res) => {
+              console.log('批量删除员工信息', res)
+              if (res.data.errno === 0) {
+                this.getData()
+                this.$notify({
+                  title: '删除成功',
+                  type: 'success'
+                })
+              } else {
+                this.$notify.error({
+                  title: '删除失败',
+                  message: res.data.errmsg
+                })
+              }
+            })
+            .catch((err) => {
+              console.log(err)
+            })
+        }).catch(()=>{
+          console.log('取消')
+        })
+      } else {
+        this.$alert('请先选择要删除的员工', '提示', {
+          confirmButtonText: '确定',
+          type: 'warning'
+        })
+      }
+    },
+    // 处理批量删除
+    handleSelectionChange (selection) {
+      console.log('多选：', selection)
+      this.deleteManyInfo = []
+      this.deleteManyInfo = selection
+      console.log(this.deleteManyInfo)
     }
   }
 }
 </script>
 
 <style>
+.d2-container-full__header {
+  padding: 0px 20px !important;
+}
+.demo-form-inline {
+  /* padding-top: 20px; */
+  padding-bottom: 0px;
+}
 .el-table .warning-row {
   /* background: oldlace; */
 }
