@@ -58,6 +58,8 @@
 
 <script>
 import axios from 'axios'
+import dayjs from 'dayjs'
+
 import { httpGet, httpPost } from '@/api/sys/http'
 import MyTag2 from './MyTag2'
 import { mapState } from 'vuex'
@@ -183,7 +185,7 @@ export default {
           }
         },
         {
-          title: '有效工作时间(天)',
+          title: '有效工作时间',
           key: 'note'
         }
       ],
@@ -360,11 +362,18 @@ export default {
         },
         photo_name: {
           title: '是否已录入人脸',
-          value: ''
+          value: '',
+          component: {
+            name: MyTag2
+          }
         },
         note: {
-          title: '有效工作时间(天)',
-          value: ''
+          title: '有效工作时间',
+          value: '',
+          component: {
+            name: 'el-date-picker',
+            span: 12
+          }
         }
       },
       formOptions: {
@@ -426,6 +435,8 @@ export default {
       } else {
         this.formOptions.saveLoading = true
         setTimeout(() => {
+          console.log(row)
+          row.note = dayjs(row.note).format('YYYY-MM-DD')
           this.addData(row)
           // this.$message({
           //   message: '保存成功',

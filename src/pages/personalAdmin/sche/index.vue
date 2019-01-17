@@ -15,8 +15,7 @@
       @row-edit="handleRowEdit"
       @row-remove="handleRowRemove"
       @dialog-cancel="handleDialogCancel"
-      selection-row
-      @selection-change="handleSelectionChange"/>
+      />
   </d2-container>
 </template>
 
@@ -104,10 +103,10 @@ export default {
         size: 'small'
       },
       formTemplate: {
-        t_id: {
-          title: '工号',
-          value: ''
-        },
+        // t_id: {
+        //   title: '工号',
+        //   value: ''
+        // },
         date: {
           title: '日期',
           value: '',
@@ -199,7 +198,10 @@ export default {
       this.formOptions.saveLoading = true
       setTimeout(() => {
         console.log(row)
-        row.date = dayjs(row.date).format('YYYY-MM-DD')
+        if(row.data !== ''){
+          row.date = dayjs(row.date).format('YYYY-MM-DD')
+        }
+        
         this.addData(row)
         // this.$message({
         //   message: '保存成功',

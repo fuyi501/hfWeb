@@ -67,6 +67,7 @@
           <aplayer
             ref="Aplayer"
             @play="paly"
+            @pause="pause"
             autoplay
             v-if="flag"
             listMaxHeight='430px'
@@ -82,7 +83,7 @@
         <el-col :span="4" style="margin-left:20px;">
           <h3>事件大图</h3>
           <img :src="bigpic" style="width:533px;height:300px;" class="image">
-          <p>{{ evenTitle }}</p>
+          <p style="width:533px">{{ evenTitle }}</p>
         </el-col>
       </el-row>
     </div>
@@ -94,8 +95,11 @@ import Aplayer from 'vue-aplayer'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import Vue from 'vue'
+var schedule = require('node-schedule')
 const getAudioInfo = 'http://192.168.9.15:8360/audio/getaudio'
+const intervalGetInfo = 'http://192.168.9.15:8360/audio/intervalget'
 const editDataUrl = 'http://192.168.9.15:8360/audio/editaudio'
+const openCloseAllUrl = 'http://192.168.9.15:8360/audio/opencloseall'
 const getAudio = 'http://192.168.9.15:8360/audio/playaudio'
 export default {
   components: {
@@ -135,13 +139,36 @@ export default {
       alarmString: ['Fnorth', 'Fsouth', 'Gate', 'Lab', 'Main_road', 'SWJTU', 'Sleft', 'Sright', 'Tank_eight', 'Tank_four', 'Tank_jl', 'Tank_main'],
       labelPosition: 'left',
       bigpic: './image/index.png',
-      evenTitle: ''
+      evenTitle: '',
+      maxid: 0, // 最大的id号
+      interval: '' // 定时查询数据执行对象
+    }
+  },
+  watch: {
+    list3 () {
+      console.log('this.list3的长度：', this.list3.length)
+      // 如果音频列表超过300，则重新刷新一次
+      if(this.list3.length > 400){
+        this.flag = false
+        this.getData(this.alarmString)
+      }
     }
   },
   mounted () {
     console.log('音频 mounted')
     this.getAudioInfo()
-    // this.getData(this.alarmString)
+    var intervalTask = schedule.scheduleJob('*/30 * * * * *', ()=>{
+      console.log('每30秒执行一次!');
+      this.intervalGet()
+    });
+    // 通过$once来监听定时器，在beforeDestroy钩子可以被清除。
+    this.$once('hook:beforeDestroy', () => {    
+      console.log('销毁定时器')        
+      intervalTask.cancel()                               
+    })
+  },
+  beforeDestroy() {
+    console.log('报警页面销毁')
   },
   methods: {
     paly () {
@@ -150,11 +177,15 @@ export default {
       let info = this.$refs.Aplayer.currentMusic
       for (let item of this.bigImgInfo) {
         if (item.small_picture === info.pic) {
-          console.log(item)
+          console.log('大图：', item)
           this.bigpic = item.big_picture
           this.evenTitle = item.title
         }
       }
+    },
+    pause () {
+      console.log('暂停')
+
     },
     openAll () {
       console.log('打开所有')
@@ -169,6 +200,7 @@ export default {
       }
       console.log(this.alarmString)
       this.flag = false
+      this.openCloseAllAudioData('openall')
       this.getData(this.alarmString)
     },
     openClose () {
@@ -177,6 +209,8 @@ export default {
         this.alarmData.data[i].is_alarm = false
       }
       this.flag = false
+      this.alarmString = []
+      this.openCloseAllAudioData('closeall')
     },
     changeSwitch () {
       console.log(this.alarmForm)
@@ -272,12 +306,14 @@ export default {
           if (res.data.length > 0) {
             for (let i in res.data) {
               this.list3.push({
+                id: res.data[i].id,
                 title: res.data[i].text,
                 artist: dayjs(res.data[i].time).format('YYYY-MM-DD HH:mm:ss'),
                 src: res.data[i].src,
                 pic: res.data[i].small_picture
               })
               this.bigImgInfo.push({
+                id: res.data[i].id,
                 title: res.data[i].text,
                 artist: dayjs(res.data[i].time).format('YYYY-MM-DD HH:mm:ss'),
                 src: res.data[i].src,
@@ -324,6 +360,78 @@ export default {
           } else {
             this.$notify.error({
               title: '编辑失败',
+              message: res.data.errmsg
+            })
+          }
+        })
+        .catch(function (err) {
+          console.log(err)
+        })
+    },
+    // 打开关闭全部设置
+    openCloseAllAudioData (data) {
+      console.log('打开关闭全部设置', data)
+      axios.post(openCloseAllUrl, {
+        audioData: data
+      })
+        .then((res) => {
+          console.log(res)
+          if (res.data.errno === 0) {
+            // 后台修改这个值
+            this.$notify({
+              title: '编辑成功',
+              type: 'success'
+            })
+          } else {
+            this.$notify.error({
+              title: '编辑失败',
+              message: res.data.errmsg
+            })
+          }
+        })
+        .catch(function (err) {
+          console.log(err)
+        })
+    },
+    // 定时获取报警信息
+    intervalGet () {
+      console.log(this.alarmString)
+      let alarmString = this.alarmString.join(',')
+      console.log('定时查询语音报警信息alarmString: ', alarmString, '最大的id号：', this.list3[this.list3.length-1].id)
+      axios.get(intervalGetInfo, {
+        params: {
+          alarmString: alarmString,
+          maxid: this.list3[this.list3.length-1].id
+        }
+      })
+        .then((res) => {
+          console.log(res)
+          if (res.data.length > 0) {
+            for (let i in res.data) {
+              this.list3.push({
+                id: res.data[i].id,
+                title: res.data[i].text,
+                artist: dayjs(res.data[i].time).format('YYYY-MM-DD HH:mm:ss'),
+                src: res.data[i].src,
+                pic: res.data[i].small_picture
+              })
+              this.bigImgInfo.push({
+                id: res.data[i].id,
+                title: res.data[i].text,
+                artist: dayjs(res.data[i].time).format('YYYY-MM-DD HH:mm:ss'),
+                src: res.data[i].src,
+                big_picture: res.data[i].big_picture,
+                small_picture: res.data[i].small_picture
+              })
+            }
+            this.$notify({
+              title: '获取 ' + res.data.length + ' 条新的数据',
+              type: 'success'
+            })
+            console.log(this.list3)
+          } else {
+            this.$notify.error({
+              title: '没有数据',
               message: res.data.errmsg
             })
           }

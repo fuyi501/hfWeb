@@ -13,7 +13,8 @@ import i18n from './i18n'
 import d2Admin from '@/plugin/d2admin'
 import pluginImport from '@/plugin/import'
 import pluginExport from '@/plugin/export'
-
+// [ 可选插件组件 ] 图表
+import VCharts from 'v-charts'
 // 菜单和路由设置
 import router from './router'
 import menuHeader from '@/menu/header'
@@ -39,6 +40,7 @@ Vue.use(D2Crud)
 Vue.use(d2Admin)
 Vue.use(pluginImport)
 Vue.use(pluginExport)
+Vue.use(VCharts)
 
 new Vue({
   router,
