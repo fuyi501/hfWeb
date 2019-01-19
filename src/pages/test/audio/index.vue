@@ -3,7 +3,7 @@
     <template slot="header">语音报警</template>
     <div class="d2-mb">
       <el-row style="margin-left:0px;" :gutter="20">
-        <el-col :span="10" style="width:440px;">
+        <el-col :span="10" style="width:480px;">
           <el-row style="height: 63px; width: 300px;" type="flex" align="middle" :gutter="10">
             <el-col ><div class="settingFont">报警设置</div></el-col>
             <el-col ><el-button type="primary" size="mini" @click="openAll">全部开启</el-button></el-col>
@@ -64,21 +64,25 @@
         </el-col>
         <el-col :span="10" style="width:540px;">
           <h3>报警列表</h3>
-          <aplayer
-            ref="Aplayer"
-            @play="paly"
-            @pause="pause"
-            autoplay
-            v-if="flag"
-            listMaxHeight='430px'
-            theme="#b7daff"
-            repeat="repeat-all"
-            show-lrc
-            :muted.sync="muted"
-            :volume.sync="volume"
-            :music='list3[0]'
-            :list='list3'
-          />
+          <p v-if="ishaveaudio">没有报警数据</p>
+          <div v-else>
+            <aplayer
+              ref="Aplayer"
+              @play="paly"
+              @pause="pause"
+              autoplay
+              v-if="flag"
+              listMaxHeight='430px'
+              theme="#b7daff"
+              repeat="repeat-all"
+              show-lrc
+              :muted.sync="muted"
+              :volume.sync="volume"
+              :music='list3[0]'
+              :list='list3'
+            />
+          </div>
+          
         </el-col>
         <el-col :span="4" style="margin-left:20px;">
           <h3>事件大图</h3>
@@ -108,6 +112,7 @@ export default {
   data () {
     return {
       flag: false,
+      ishaveaudio: false, // 是否有报警数据
       volume: 1, // 音量
       muted: false, // 静音
       bigImgInfo: [],
@@ -151,6 +156,8 @@ export default {
       if(this.list3.length > 300){
         this.flag = false
         this.getData(this.alarmString)
+      } else if( this.list3.length === 0) {
+        this.ishaveaudio = true
       }
     }
   },
@@ -329,9 +336,9 @@ export default {
             // 因为是异步请求，所以一开始播放器中是没有歌曲的，所有给了个v-if不然会插件默认会先生成播放器，导致报错(这个很重要)
             this.flag = true
           } else {
-            this.$notify.error({
-              title: '没有数据',
-              message: res.data.errmsg
+            this.$notify({
+              title: '没有异常数据',
+              type: 'success'
             })
           }
         })
