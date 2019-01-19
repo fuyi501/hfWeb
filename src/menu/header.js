@@ -20,16 +20,17 @@ export default [
     children: [
       { path: '/alarmSetting', title: '报警设置', icon: 'cog' }
     ]
-  },
-  {
-    title: '测试',
-    icon: 'folder-o',
-    children: [
-      { path: '/areaControl', title: '区域控制', icon: 'folder-o' },
-      { path: '/face', title: '上传图片', icon: 'folder-o' },
-      { path: '/table', title: '上传表格', icon: 'table' },
-      { path: '/photo', title: '摄像头拍照', icon: 'camera' },
-      { path: '/stream2', title: '测试视频流', icon: 'camera' }
-    ]
   }
+  // ,
+  // {
+  //   title: '测试',
+  //   icon: 'folder-o',
+  //   children: [
+  //     { path: '/areaControl', title: '区域控制', icon: 'folder-o' },
+  //     { path: '/face', title: '上传图片', icon: 'folder-o' },
+  //     { path: '/table', title: '上传表格', icon: 'table' },
+  //     { path: '/photo', title: '摄像头拍照', icon: 'camera' },
+  //     { path: '/stream2', title: '测试视频流', icon: 'camera' }
+  //   ]
+  // }
 ]

@@ -148,7 +148,7 @@ export default {
     list3 () {
       console.log('this.list3的长度：', this.list3.length)
       // 如果音频列表超过300，则重新刷新一次
-      if(this.list3.length > 400){
+      if(this.list3.length > 300){
         this.flag = false
         this.getData(this.alarmString)
       }
@@ -157,8 +157,8 @@ export default {
   mounted () {
     console.log('音频 mounted')
     this.getAudioInfo()
-    var intervalTask = schedule.scheduleJob('*/30 * * * * *', ()=>{
-      console.log('每30秒执行一次!');
+    var intervalTask = schedule.scheduleJob('*/2 * * * * *', ()=>{
+      console.log('每2秒执行一次!');
       this.intervalGet()
     });
     // 通过$once来监听定时器，在beforeDestroy钩子可以被清除。
