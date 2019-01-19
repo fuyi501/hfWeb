@@ -55,7 +55,7 @@
           <el-form
             ref="alarmData"
             :model="alarmData"
-            label-width="200px"
+            label-width="220px"
             :label-position="labelPosition">
             <el-form-item :label="(index+1) + ' ' + item.ch_name" size="medium" v-for="(item, index) in alarmData.data" v-bind:key="item.id">
               <el-switch v-model="item.is_alarm" @change="changeSwitch2(item)" active-text="开启报警" inactive-text="关闭报警" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
@@ -430,10 +430,11 @@ export default {
             })
             console.log(this.list3)
           } else {
-            this.$notify.error({
-              title: '没有数据',
-              message: res.data.errmsg
-            })
+            // this.$notify.error({
+            //   title: '没有数据',
+            //   message: res.data.errmsg
+            // })
+            console('2秒--没有数据')
           }
         })
         .catch(function (err) {
