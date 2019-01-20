@@ -65,11 +65,11 @@
         <el-col :span="10" style="width:540px;">
           <h3>报警列表</h3>
           <aplayer
+            v-if="flag"
             ref="Aplayer"
             @play="paly"
             @pause="pause"
             autoplay
-            v-if="flag"
             listMaxHeight='430px'
             theme="#b7daff"
             repeat="repeat-all"
