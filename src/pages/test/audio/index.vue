@@ -158,6 +158,8 @@ export default {
         this.getData(this.alarmString)
       } else if( this.list3.length === 0) {
         this.ishaveaudio = true
+      } else {
+        this.ishaveaudio = false
       }
     }
   },
