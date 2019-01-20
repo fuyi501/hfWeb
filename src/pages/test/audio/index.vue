@@ -64,25 +64,22 @@
         </el-col>
         <el-col :span="10" style="width:540px;">
           <h3>报警列表</h3>
-          <p v-if="ishaveaudio">没有报警数据</p>
-          <div v-else>
-            <aplayer
-              ref="Aplayer"
-              @play="paly"
-              @pause="pause"
-              autoplay
-              v-if="flag"
-              listMaxHeight='430px'
-              theme="#b7daff"
-              repeat="no-repeat"
-              show-lrc
-              :muted.sync="muted"
-              :volume.sync="volume"
-              :music='list3[0]'
-              :list='list3'
-            />
-          </div>
-          
+          <aplayer
+            ref="Aplayer"
+            @play="paly"
+            @pause="pause"
+            autoplay
+            v-if="flag"
+            listMaxHeight='430px'
+            theme="#b7daff"
+            repeat="repeat-all"
+            show-lrc
+            :muted.sync="muted"
+            :volume.sync="volume"
+            :music='list3[0]'
+            :list='list3'
+          />
+          <p v-else>没有报警数据</p>
         </el-col>
         <el-col :span="4" style="margin-left:20px;">
           <h3>事件大图</h3>
@@ -157,9 +154,7 @@ export default {
         this.flag = false
         this.getData(this.alarmString)
       } else if( this.list3.length === 0) {
-        this.ishaveaudio = true
-      } else {
-        this.ishaveaudio = false
+        this.flag = false
       }
     }
   },
