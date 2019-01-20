@@ -404,49 +404,54 @@ export default {
     intervalGet () {
       console.log(this.alarmString)
       let alarmString = this.alarmString.join(',')
-      console.log('定时查询语音报警信息alarmString: ', alarmString, '最大的id号：', this.list3[this.list3.length-1].id)
-      axios.get(intervalGetInfo, {
-        params: {
-          alarmString: alarmString,
-          maxid: this.list3[this.list3.length-1].id
-        }
-      })
-        .then((res) => {
-          console.log(res)
-          if (res.data.length > 0) {
-            for (let i in res.data) {
-              this.list3.push({
-                id: res.data[i].id,
-                title: res.data[i].text,
-                artist: dayjs(res.data[i].time).format('YYYY-MM-DD HH:mm:ss'),
-                src: res.data[i].src,
-                pic: res.data[i].small_picture
-              })
-              this.bigImgInfo.push({
-                id: res.data[i].id,
-                title: res.data[i].text,
-                artist: dayjs(res.data[i].time).format('YYYY-MM-DD HH:mm:ss'),
-                src: res.data[i].src,
-                big_picture: res.data[i].big_picture,
-                small_picture: res.data[i].small_picture
-              })
-            }
-            this.$notify({
-              title: '获取 ' + res.data.length + ' 条新的数据',
-              type: 'success'
-            })
-            console.log(this.list3)
-          } else {
-            // this.$notify.error({
-            //   title: '没有数据',
-            //   message: res.data.errmsg
-            // })
-            console.log('2秒--没有数据')
+      if (this.list3.length !== 0) {
+        console.log('定时查询语音报警信息alarmString: ', alarmString, '最大的id号：', this.list3[this.list3.length-1].id)
+        axios.get(intervalGetInfo, {
+          params: {
+            alarmString: alarmString,
+            maxid: this.list3[this.list3.length-1].id
           }
         })
-        .catch(function (err) {
-          console.log(err)
-        })
+          .then((res) => {
+            console.log(res)
+            if (res.data.length > 0) {
+              for (let i in res.data) {
+                this.list3.push({
+                  id: res.data[i].id,
+                  title: res.data[i].text,
+                  artist: dayjs(res.data[i].time).format('YYYY-MM-DD HH:mm:ss'),
+                  src: res.data[i].src,
+                  pic: res.data[i].small_picture
+                })
+                this.bigImgInfo.push({
+                  id: res.data[i].id,
+                  title: res.data[i].text,
+                  artist: dayjs(res.data[i].time).format('YYYY-MM-DD HH:mm:ss'),
+                  src: res.data[i].src,
+                  big_picture: res.data[i].big_picture,
+                  small_picture: res.data[i].small_picture
+                })
+              }
+              this.$notify({
+                title: '获取 ' + res.data.length + ' 条新的数据',
+                type: 'success'
+              })
+              console.log(this.list3)
+            } else {
+              // this.$notify.error({
+              //   title: '没有数据',
+              //   message: res.data.errmsg
+              // })
+              console.log('2秒--没有数据')
+            }
+          })
+          .catch(function (err) {
+            console.log(err)
+          })
+      } else {
+        this.getData(alarmString)
+      }
+      
     }
   }
 }
