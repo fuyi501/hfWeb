@@ -449,7 +449,7 @@ export default {
             console.log(err)
           })
       } else {
-        this.getData(alarmString)
+        this.getData(this.alarmString)
       }
       
     }
