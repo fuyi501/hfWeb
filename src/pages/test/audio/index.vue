@@ -449,7 +449,45 @@ export default {
             console.log(err)
           })
       } else {
-        this.getData(this.alarmString)
+        axios.get(intervalGetInfo, {
+          params: {
+            alarmString: alarmString
+          }
+        })
+          .then((res) => {
+            console.log(res)
+            if (res.data.length > 0) {
+              for (let i in res.data) {
+                this.list3.push({
+                  id: res.data[i].id,
+                  title: res.data[i].text,
+                  artist: dayjs(res.data[i].time).format('YYYY-MM-DD HH:mm:ss'),
+                  src: res.data[i].src,
+                  pic: res.data[i].small_picture
+                })
+                this.bigImgInfo.push({
+                  id: res.data[i].id,
+                  title: res.data[i].text,
+                  artist: dayjs(res.data[i].time).format('YYYY-MM-DD HH:mm:ss'),
+                  src: res.data[i].src,
+                  big_picture: res.data[i].big_picture,
+                  small_picture: res.data[i].small_picture
+                })
+              }
+              this.$notify({
+                title: '获取成功',
+                type: 'success'
+              })
+              console.log(this.list3)
+              // 因为是异步请求，所以一开始播放器中是没有歌曲的，所有给了个v-if不然会插件默认会先生成播放器，导致报错(这个很重要)
+              this.flag = true
+            } else {
+              console.log('this.list3为空，2秒查询--没有数据')
+            }
+          })
+          .catch(function (err) {
+            console.log(err)
+          })
       }
       
     }
