@@ -74,7 +74,7 @@
               v-if="flag"
               listMaxHeight='430px'
               theme="#b7daff"
-              repeat="repeat-all"
+              repeat="no-repeat"
               show-lrc
               :muted.sync="muted"
               :volume.sync="volume"
