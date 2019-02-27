@@ -127,7 +127,7 @@
 
 <script>
 import { httpGet, httpPost } from '@/api/sys/http'
-const getDataUrl = 'http://192.168.100.240:8360/index/gettable'
+const getDataUrl = 'http://192.168.9.15:8360/index/gettable'
 
 export default {
   components: {
