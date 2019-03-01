@@ -69,17 +69,18 @@
             ref="Aplayer"
             @play="paly"
             @pause="pause"
+            @ended="onMusicEnded"
             autoplay
             listMaxHeight='430px'
             theme="#b7daff"
-            repeat="repeat-all"
+            repeat="none"
             show-lrc
             :muted.sync="muted"
             :volume.sync="volume"
-            :music='list3[0]'
-            :list='list3'
+            :music='curMusic'
+            :list='shuffledList'
           />
-          <p v-else>没有报警数据</p>
+          <p v-else>正在努力获取数据，请稍等。。。</p>
         </el-col>
         <el-col :span="4" style="margin-left:20px;">
           <h3>事件大图</h3>
@@ -121,6 +122,7 @@ export default {
         //   pic: './image/index.png'
         // }
       ],
+      curMusic: {}, // 当前播放的音乐
       alarmData: {
         data: []
       },
@@ -146,13 +148,21 @@ export default {
       interval: '' // 定时查询数据执行对象
     }
   },
+  computed: {      
+    shuffledList () {
+        return this.list3
+    },
+  },
   watch: {
+    
     list3 () {
-      console.log('this.list3的长度：', this.list3.length)
+      // console.log('this.list3的长度：', this.list3.length)
       // 如果音频列表超过300，则重新刷新一次
-      if(this.list3.length > 300){
+      if(this.list3.length > 200) {
         this.flag = false
         this.getData(this.alarmString)
+        this.curMusic = this.list3[0] // 当前播放第一首音乐
+
       } else if( this.list3.length === 0) {
         this.flag = false
       }
@@ -161,8 +171,13 @@ export default {
   mounted () {
     console.log('音频 mounted')
     this.getAudioInfo()
-    var intervalTask = schedule.scheduleJob('*/2 * * * * *', ()=>{
-      console.log('每2秒执行一次!');
+
+    if(this.list3[0]) {
+      this.curMusic = this.list3[0] // 当前播放第一首音乐
+    }
+
+    var intervalTask = schedule.scheduleJob('*/8 * * * * *', ()=>{
+      console.log('每8秒执行一次!')
       this.intervalGet()
     });
     // 通过$once来监听定时器，在beforeDestroy钩子可以被清除。
@@ -176,12 +191,11 @@ export default {
   },
   methods: {
     paly () {
-      console.log('开始播放')
-      console.log(this.$refs.Aplayer.currentMusic)
+      console.log('开始播放,当前音乐：', this.$refs.Aplayer.currentMusic)
       let info = this.$refs.Aplayer.currentMusic
       for (let item of this.bigImgInfo) {
         if (item.small_picture === info.pic) {
-          console.log('大图：', item)
+          // console.log('大图：', item)
           this.bigpic = item.big_picture
           this.evenTitle = item.title
         }
@@ -189,6 +203,20 @@ export default {
     },
     pause () {
       console.log('暂停')
+
+    },
+    onMusicEnded () {
+      console.log(this.$refs.Aplayer.currentMusic, '播放完了')
+
+      // var newArr = this.list3.filter(item => {
+      //   if(this.$refs.Aplayer.currentMusic.id !== item.id) {
+      //     return true
+      //   }
+      // })
+      // console.log(newArr)
+      this.list3.splice(0,1)
+      console.log('this.list3的长度：', this.list3.length)
+      this.curMusic = this.list3[0]
 
     },
     openAll () {
@@ -399,10 +427,10 @@ export default {
     },
     // 定时获取报警信息
     intervalGet () {
-      console.log(this.alarmString)
+      // console.log(this.alarmString)
       let alarmString = this.alarmString.join(',')
       if (this.list3.length !== 0) {
-        console.log('定时查询语音报警信息alarmString: ', alarmString, '最大的id号：', this.list3[this.list3.length-1].id)
+        // console.log('定时查询语音报警信息alarmString: ', alarmString, '最大的id号：', this.list3[this.list3.length-1].id)
         axios.get(intervalGetInfo, {
           params: {
             alarmString: alarmString,
@@ -410,16 +438,38 @@ export default {
           }
         })
           .then((res) => {
-            console.log(res)
+            // console.log(res)
             if (res.data.length > 0) {
+
+              let listlength = this.list3.length 
+              // console.log('listLength的长度：', listlength)
+
               for (let i in res.data) {
-                this.list3.push({
-                  id: res.data[i].id,
-                  title: res.data[i].text,
-                  artist: dayjs(res.data[i].time).format('YYYY-MM-DD HH:mm:ss'),
-                  src: res.data[i].src,
-                  pic: res.data[i].small_picture
-                })
+
+                // console.log('listlength + i: ', Number(listlength)+Number(i), i)
+
+                Vue.set( // 这样就能被vue监控到，更新视图
+                  this.list3,
+                  Number(listlength)+Number(i),
+                  {
+                    id: res.data[i].id,
+                    title: res.data[i].text,
+                    artist: dayjs(res.data[i].time).format('YYYY-MM-DD HH:mm:ss'),
+                    src: res.data[i].src,
+                    pic: res.data[i].small_picture
+                  })
+
+                // 注释掉这种变异方法，使用 vue.set()
+                // this.list3.push({
+                //   id: res.data[i].id,
+                //   title: res.data[i].text,
+                //   artist: dayjs(res.data[i].time).format('YYYY-MM-DD HH:mm:ss'),
+                //   src: res.data[i].src,
+                //   pic: res.data[i].small_picture
+                // })
+
+
+
                 this.bigImgInfo.push({
                   id: res.data[i].id,
                   title: res.data[i].text,
@@ -429,11 +479,14 @@ export default {
                   small_picture: res.data[i].small_picture
                 })
               }
+
+
               this.$notify({
                 title: '获取 ' + res.data.length + ' 条新的数据',
                 type: 'success'
               })
-              console.log(this.list3)
+              // console.log(this.list3)
+
             } else {
               // this.$notify.error({
               //   title: '没有数据',
@@ -452,7 +505,7 @@ export default {
           }
         })
           .then((res) => {
-            console.log(res)
+            // console.log(res)
             if (res.data.length > 0) {
               for (let i in res.data) {
                 this.list3.push({
@@ -475,9 +528,12 @@ export default {
                 title: '获取成功',
                 type: 'success'
               })
-              console.log(this.list3)
+              // console.log(this.list3)
+
+              this.curMusic = this.list3[0] // 当前播放第一首音乐
+
               // 因为是异步请求，所以一开始播放器中是没有歌曲的，所有给了个v-if不然会插件默认会先生成播放器，导致报错(这个很重要)
-              this.flag = true
+              // this.flag = true
             } else {
               console.log('this.list3为空，2秒查询--没有数据')
             }
