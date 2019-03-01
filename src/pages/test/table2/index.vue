@@ -79,7 +79,7 @@
 
 <script>
 import axios from 'axios'
-const uploadTableUrl = 'http://192.168.100.240:8360/index/savetable'
+const uploadTableUrl = 'http://192.168.2.254:8360/index/savetable'
 export default {
   data () {
     var checkPhone = (rule, value, callback) => {

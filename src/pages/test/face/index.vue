@@ -5,7 +5,7 @@
       <el-upload
         class="upload-demo"
         ref="upload"
-        action="http://192.168.100.240:8360/index/saveimg"
+        action="http://192.168.2.254:8360/index/saveimg"
         :show-file-list="true"
         :data= 'userInfo'
         name='avatar'

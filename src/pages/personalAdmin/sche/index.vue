@@ -24,10 +24,10 @@ import axios from 'axios'
 import dayjs from 'dayjs'
 import { httpGet, httpPost } from '@/api/sys/http'
 
-const addDataUrl = 'http://192.168.100.240:8360/index/addtable'
-const getDataUrl = 'http://192.168.100.240:8360/index/gettable'
-const editDataUrl = 'http://192.168.100.240:8360/index/edittable'
-const deleteDataUrl = 'http://192.168.100.240:8360/index/deletetable'
+const addDataUrl = 'http://192.168.2.254:8360/index/addtable'
+const getDataUrl = 'http://192.168.2.254:8360/index/gettable'
+const editDataUrl = 'http://192.168.2.254:8360/index/edittable'
+const deleteDataUrl = 'http://192.168.2.254:8360/index/deletetable'
 export default {
   data () {
     return {

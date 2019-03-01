@@ -18,11 +18,11 @@ rtsp://admin:Admin12345@192.168.2.74:554/Streaming/Channels/101
 
 ## 推流
 
-ffmpeg -i rtsp://admin:swjtu9422@192.168.9.36:554 -vcodec h264 -f flv -an rtmp://192.168.100.240:1935/hls/stream
+ffmpeg -i rtsp://admin:swjtu9422@192.168.9.36:554 -vcodec h264 -f flv -an rtmp://192.168.2.254:1935/hls/stream
 
-ffmpeg -i rtsp://admin:Admin12345@192.168.2.74:554/Streaming/Channels/101 -vcodec h264 -f flv -an rtmp://192.168.100.240:1935/hls/stream
+ffmpeg -i rtsp://admin:Admin12345@192.168.2.74:554/Streaming/Channels/101 -vcodec h264 -f flv -an rtmp://192.168.2.254:1935/hls/stream
 
-ffmpeg -i rtsp://admin:Admin12345@192.168.2.74:554/Streaming/Channels/101 -f mp4 -vcodec copy -r 25 -s 1920*1080 -b:v 1024000 -an -f flv -an rtmp://192.168.100.240:1935/hls/stream
+ffmpeg -i rtsp://admin:Admin12345@192.168.2.74:554/Streaming/Channels/101 -f mp4 -vcodec copy -r 25 -s 1920*1080 -b:v 1024000 -an -f flv -an rtmp://192.168.2.254:1935/hls/stream
 
 
 # 问题
