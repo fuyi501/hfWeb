@@ -10,48 +10,6 @@
             <el-col ><el-button type="danger" size="mini" @click="openClose">全部关闭</el-button></el-col>
             <!-- <el-col ><el-button type="success" size="mini" @click="openClose">确认报警项</el-button></el-col> -->
           </el-row>
-          <!-- <el-form
-            ref="alarmForm"
-            :model="alarmForm"
-            label-width="200px"
-            :label-position="labelPosition">
-            <el-form-item label="一车间一楼北楼梯间" size="medium">
-              <el-switch v-model="alarmForm.Fnorth" @change="changeSwitch" active-text="开启报警" inactive-text="关闭报警" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
-            </el-form-item>
-            <el-form-item label="一车间一楼南楼梯间">
-              <el-switch v-model="alarmForm.Fsouth" @change="changeSwitch" active-text="开启报警" inactive-text="关闭报警" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
-            </el-form-item>
-            <el-form-item label="大门">
-              <el-switch v-model="alarmForm.Gate" @change="changeSwitch" active-text="开启报警" inactive-text="关闭报警" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
-            </el-form-item>
-            <el-form-item label="实验楼">
-              <el-switch v-model="alarmForm.Lab" @change="changeSwitch" active-text="开启报警" inactive-text="关闭报警" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
-            </el-form-item>
-            <el-form-item label="盐酸小罐区主干道">
-              <el-switch v-model="alarmForm.Main_road" @change="changeSwitch" active-text="开启报警" inactive-text="关闭报警" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
-            </el-form-item>
-            <el-form-item label="西南交大9423实验室">
-              <el-switch v-model="alarmForm.SWJTU" @change="changeSwitch" active-text="开启报警" inactive-text="关闭报警" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
-            </el-form-item>
-            <el-form-item label="二车间一楼左侧楼梯口">
-              <el-switch v-model="alarmForm.Sleft" @change="changeSwitch" active-text="开启报警" inactive-text="关闭报警" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
-            </el-form-item>
-            <el-form-item label="二车间一楼右侧楼梯口">
-              <el-switch v-model="alarmForm.Sright" @change="changeSwitch" active-text="开启报警" inactive-text="关闭报警" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
-            </el-form-item>
-            <el-form-item label="原料大罐区8号罐">
-              <el-switch v-model="alarmForm.Tank_eight" @change="changeSwitch" active-text="开启报警" inactive-text="关闭报警" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
-            </el-form-item>
-            <el-form-item label="原料大罐区4号罐">
-              <el-switch v-model="alarmForm.Tank_four" @change="changeSwitch" active-text="开启报警" inactive-text="关闭报警" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
-            </el-form-item>
-            <el-form-item label="原料大罐区靠金陵路">
-              <el-switch v-model="alarmForm.Tank_jl" @change="changeSwitch" active-text="开启报警" inactive-text="关闭报警" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
-            </el-form-item>
-            <el-form-item label="原料大罐区主干道">
-              <el-switch v-model="alarmForm.Tank_main" @change="changeSwitch" active-text="开启报警" inactive-text="关闭报警" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
-            </el-form-item>
-          </el-form> -->
           <el-form
             ref="alarmData"
             :model="alarmData"
@@ -77,7 +35,7 @@
             show-lrc
             :muted.sync="muted"
             :volume.sync="volume"
-            :music='curMusic'
+            :music='shuffledList[0]'
             :list='shuffledList'
           />
           <p v-else>正在努力获取数据，请稍等。。。</p>
@@ -122,69 +80,45 @@ export default {
         //   pic: './image/index.png'
         // }
       ],
-      curMusic: {}, // 当前播放的音乐
       alarmData: {
         data: []
       },
-      // alarmForm: {
-      //   Fnorth: true, // 一车间一楼北楼梯间
-      //   Fsouth: true, // 一车间一楼南楼梯间
-      //   Gate: true, // 大门
-      //   Lab: true, // 实验楼
-      //   Main_road: true, // 盐酸小罐区主干道
-      //   SWJTU: true, // 西南交大9423实验室
-      //   Sleft: true, // 二车间一楼左侧楼梯口
-      //   Sright: true, // 二车间一楼右侧楼梯口
-      //   Tank_eight: true, // 原料大罐区8号罐
-      //   Tank_four: true, // 原料大罐区4号罐
-      //   Tank_jl: true, // 原料大罐区靠金陵路
-      //   Tank_main: true // 原料大罐区主干道
-      // },
       alarmString: ['Fnorth', 'Fsouth', 'Gate', 'Lab', 'Main_road', 'SWJTU', 'Sleft', 'Sright', 'Tank_eight', 'Tank_four', 'Tank_jl', 'Tank_main'],
       labelPosition: 'left',
       bigpic: './image/index.png',
       evenTitle: '',
       maxid: 0, // 最大的id号
-      interval: '' // 定时查询数据执行对象
+      interval: '', // 定时查询数据执行对象
+      tempIndex: 0, // 下标
     }
   },
   computed: {      
     shuffledList () {
-        return this.list3
-    },
+      return this.list3
+    }
   },
   watch: {
-    
     list3 () {
-      // console.log('this.list3的长度：', this.list3.length)
-      // 如果音频列表超过300，则重新刷新一次
-      if(this.list3.length > 200) {
-        this.flag = false
-        this.getData(this.alarmString)
-        this.curMusic = this.list3[0] // 当前播放第一首音乐
-
-      } else if( this.list3.length === 0) {
-        this.flag = false
-      }
+      console.log('this.shuffledList', this.shuffledList, this.bigImgInfo, this.maxid)
     }
   },
   mounted () {
     console.log('音频 mounted')
-    this.getAudioInfo()
+    this.getAudioInfo() 
 
-    if(this.list3[0]) {
-      this.curMusic = this.list3[0] // 当前播放第一首音乐
-    }
-
-    var intervalTask = schedule.scheduleJob('*/8 * * * * *', ()=>{
-      console.log('每8秒执行一次!')
-      this.intervalGet()
-    });
-    // 通过$once来监听定时器，在beforeDestroy钩子可以被清除。
-    this.$once('hook:beforeDestroy', () => {    
-      console.log('销毁定时器')        
-      intervalTask.cancel()                               
-    })
+    setTimeout(()=>{
+      var intervalTask = schedule.scheduleJob('*/5 * * * * *', ()=>{
+        console.log('每5秒执行一次!')
+        if(this.list3.length < 100) {
+          this.intervalGet()
+        }
+      })
+      // 通过$once来监听定时器，在beforeDestroy钩子可以被清除。
+      this.$once('hook:beforeDestroy', () => {    
+        console.log('销毁定时器')        
+        intervalTask.cancel()                               
+      })
+    }, 3000)
   },
   beforeDestroy() {
     console.log('报警页面销毁')
@@ -203,20 +137,21 @@ export default {
     },
     pause () {
       console.log('暂停')
-
     },
     onMusicEnded () {
       console.log(this.$refs.Aplayer.currentMusic, '播放完了')
 
-      // var newArr = this.list3.filter(item => {
-      //   if(this.$refs.Aplayer.currentMusic.id !== item.id) {
-      //     return true
-      //   }
-      // })
-      // console.log(newArr)
-      this.list3.splice(0,1)
-      console.log('this.list3的长度：', this.list3.length)
-      this.curMusic = this.list3[0]
+      this.tempIndex += 1
+      // 每播放10条清空下前10条数据，重启播放组件
+      if(this.tempIndex === 10) {
+        this.list3.splice(0, 10)
+        this.bigImgInfo.splice(0, 10)
+        this.tempIndex = 0
+        this.flag = false
+        setTimeout(()=>{
+          this.flag = true
+        }, 100)
+      }
 
     },
     openAll () {
@@ -274,6 +209,7 @@ export default {
       this.getData(this.alarmString)
       this.editAudioData(item)
     },
+    // 获取报警信息，首先获取到用户报警的设置数据，再根据设置获取音频信息
     getAudioInfo () {
       console.log('查询报警数据')
       this.alarmString = []
@@ -323,6 +259,7 @@ export default {
           console.log(err)
         })
     },
+    // 获取报警音频数据
     getData (alarmString) {
       alarmString = alarmString.join(',')
       console.log('alarmString: ', alarmString)
@@ -357,9 +294,13 @@ export default {
               title: '获取成功',
               type: 'success'
             })
-            console.log(this.list3)
             // 因为是异步请求，所以一开始播放器中是没有歌曲的，所有给了个v-if不然会插件默认会先生成播放器，导致报错(这个很重要)
             this.flag = true
+
+            this.maxid = res.data[res.data.length - 1].id
+            
+            console.log('this.list3 and this.maxid: ', this.list3, this.maxid)
+
           } else {
             this.$notify({
               title: '没有异常数据',
@@ -435,40 +376,32 @@ export default {
           params: {
             alarmString: alarmString,
             maxid: this.list3[this.list3.length-1].id
+            // maxid: this.maxid
           }
         })
           .then((res) => {
             // console.log(res)
             if (res.data.length > 0) {
-
-              let listlength = this.list3.length 
-              // console.log('listLength的长度：', listlength)
-
               for (let i in res.data) {
+                // Vue.set( // 这样就能被vue监控到，更新视图
+                //   this.list3,
+                //   Number(listlength)+Number(i),
+                //   {
+                //     id: res.data[i].id,
+                //     title: res.data[i].text,
+                //     artist: dayjs(res.data[i].time).format('YYYY-MM-DD HH:mm:ss'),
+                //     src: res.data[i].src,
+                //     pic: res.data[i].small_picture
+                //   })
 
-                // console.log('listlength + i: ', Number(listlength)+Number(i), i)
-
-                Vue.set( // 这样就能被vue监控到，更新视图
-                  this.list3,
-                  Number(listlength)+Number(i),
-                  {
-                    id: res.data[i].id,
-                    title: res.data[i].text,
-                    artist: dayjs(res.data[i].time).format('YYYY-MM-DD HH:mm:ss'),
-                    src: res.data[i].src,
-                    pic: res.data[i].small_picture
-                  })
-
-                // 注释掉这种变异方法，使用 vue.set()
-                // this.list3.push({
-                //   id: res.data[i].id,
-                //   title: res.data[i].text,
-                //   artist: dayjs(res.data[i].time).format('YYYY-MM-DD HH:mm:ss'),
-                //   src: res.data[i].src,
-                //   pic: res.data[i].small_picture
-                // })
-
-
+                // 数组变异方法
+                this.list3.push({
+                  id: res.data[i].id,
+                  title: res.data[i].text,
+                  artist: dayjs(res.data[i].time).format('YYYY-MM-DD HH:mm:ss'),
+                  src: res.data[i].src,
+                  pic: res.data[i].small_picture
+                })
 
                 this.bigImgInfo.push({
                   id: res.data[i].id,
@@ -480,6 +413,7 @@ export default {
                 })
               }
 
+              this.maxid = this.maxid + res.data.length
 
               this.$notify({
                 title: '获取 ' + res.data.length + ' 条新的数据',
@@ -524,13 +458,14 @@ export default {
                   small_picture: res.data[i].small_picture
                 })
               }
+
+              this.maxid = res.data[res.data.length - 1].id
+
               this.$notify({
                 title: '获取成功',
                 type: 'success'
               })
               // console.log(this.list3)
-
-              this.curMusic = this.list3[0] // 当前播放第一首音乐
 
               // 因为是异步请求，所以一开始播放器中是没有歌曲的，所有给了个v-if不然会插件默认会先生成播放器，导致报错(这个很重要)
               // this.flag = true
