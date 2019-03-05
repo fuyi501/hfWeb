@@ -88,7 +88,6 @@ export default {
       bigpic: './image/index.png',
       evenTitle: '',
       maxid: 0, // 最大的id号
-      interval: '', // 定时查询数据执行对象
       tempIndex: 0, // 下标
     }
   },
@@ -106,19 +105,19 @@ export default {
     console.log('音频 mounted')
     this.getAudioInfo() 
 
-    setTimeout(()=>{
-      var intervalTask = schedule.scheduleJob('*/5 * * * * *', ()=>{
-        console.log('每5秒执行一次!')
-        if(this.list3.length < 100) {
-          this.intervalGet()
-        }
-      })
-      // 通过$once来监听定时器，在beforeDestroy钩子可以被清除。
-      this.$once('hook:beforeDestroy', () => {    
-        console.log('销毁定时器')        
-        intervalTask.cancel()                               
-      })
-    }, 3000)
+    // setTimeout(()=>{
+    //   var intervalTask = schedule.scheduleJob('*/5 * * * * *', ()=>{
+    //     console.log('每5秒执行一次!')
+    //     if(this.list3.length < 100) {
+    //       this.intervalGet()
+    //     }
+    //   })
+    //   // 通过$once来监听定时器，在beforeDestroy钩子可以被清除。
+    //   this.$once('hook:beforeDestroy', () => {    
+    //     console.log('销毁定时器')        
+    //     intervalTask.cancel()                               
+    //   })
+    // }, 3000)
   },
   beforeDestroy() {
     console.log('报警页面销毁')
@@ -151,6 +150,9 @@ export default {
         setTimeout(()=>{
           this.flag = true
         }, 100)
+        if(this.list3.length < 100) {
+          this.intervalGet()
+        }
       }
 
     },
@@ -272,6 +274,7 @@ export default {
         .then((res) => {
           console.log(res)
           this.list3 = []
+          this.bigImgInfo = []
           if (res.data.length > 0) {
             for (let i in res.data) {
               this.list3.push({

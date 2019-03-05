@@ -33,7 +33,9 @@ const frameIn = [
       { path: '/stream2/test2', name: 'stream2test2', component: () => import('@/pages/test/stream2/test2.vue'), meta: { meta, title: '测试视频流' } },
       { path: '/audio', name: 'audio', component: () => import('@/pages/test/audio'), meta: { meta, title: '语音报警' } },
       // 设置
-      { path: '/alarmSetting', name: 'alarmSetting', component: () => import('@/pages/setting/alarmSetting'), meta: { meta, title: '报警设置' } }
+      { path: '/alarmSetting', name: 'alarmSetting', component: () => import('@/pages/setting/alarmSetting'), meta: { meta, title: '报警设置' } },
+      // 报警事件
+      { path: '/event', name: 'event', component: () => import('@/pages/event'), meta: { meta, title: '报警事件' } }
     ]
   }
 ]

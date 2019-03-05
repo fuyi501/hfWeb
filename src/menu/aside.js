@@ -4,6 +4,7 @@ export default [
   { path: '/table', title: '上传表格', icon: 'table' },
   { path: '/areaControl', title: '区域控制', icon: 'map' },
   { path: '/audio', title: '语音报警', icon: 'volume-up' },
+  { path: '/event', title: '报警事件', icon: 'file-pdf-o' },
   {
     title: '人脸采集',
     icon: 'file-image-o',
