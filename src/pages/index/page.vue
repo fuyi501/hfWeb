@@ -153,7 +153,7 @@
 import { httpGet, httpPost } from '@/api/sys/http'
 import dayjs from 'dayjs'
 var scheduleEvent = require('node-schedule')
-const getEventTypeUrl = 'http://192.168.9.15:8360/charts/eventtype'
+const getEventTypeUrl = 'http://192.168.17.15:8360/charts/eventtype'
 const timeList = ['06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22']
 export default {
   components: {

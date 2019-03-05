@@ -89,10 +89,10 @@
 <script>
 import axios from 'axios'
 // 单张照片逐一上传
-const uploadImgUrl = 'http://192.168.9.15:8360/index/img'
+const uploadImgUrl = 'http://192.168.17.15:8360/index/img'
 // 五张一起上传，这里后台是异步执行，出错，暂不使用
-const uploadImgAllUrl = 'http://192.168.9.15:8360/index/imgall'
-const updateFaceUrl = 'http://192.168.9.15:8360/index/updateface'
+const uploadImgAllUrl = 'http://192.168.17.15:8360/index/imgall'
+const updateFaceUrl = 'http://192.168.17.15:8360/index/updateface'
 export default {
   data () {
     return {

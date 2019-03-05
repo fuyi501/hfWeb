@@ -14,7 +14,7 @@ export default {
     src: {
       type: String,
       required: false,
-      default: 'http://192.168.9.15:9000/'
+      default: 'http://192.168.17.15:9000/'
     }
   }
 }

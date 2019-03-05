@@ -63,13 +63,13 @@ import dayjs from 'dayjs'
 import { httpGet, httpPost } from '@/api/sys/http'
 import MyTag2 from './MyTag2'
 import { mapState } from 'vuex'
-const updateFaceUrl = 'http://192.168.9.15:8360/img/updateface' // 更新人脸库
-const searchStaffInfoUrl = 'http://192.168.9.15:8360/staff/search' // 查询员工信息
-const deleteStaffInfoUrl = 'http://192.168.9.15:8360/staff/deletemanystaffinfo' // 批量删除员工信息
-const addDataUrl = 'http://192.168.9.15:8360/index/addtable'
-const getDataUrl = 'http://192.168.9.15:8360/index/gettable'
-const editDataUrl = 'http://192.168.9.15:8360/index/edittable'
-const deleteDataUrl = 'http://192.168.9.15:8360/index/deletetable'
+const updateFaceUrl = 'http://192.168.17.15:8360/img/updateface' // 更新人脸库
+const searchStaffInfoUrl = 'http://192.168.17.15:8360/staff/search' // 查询员工信息
+const deleteStaffInfoUrl = 'http://192.168.17.15:8360/staff/deletemanystaffinfo' // 批量删除员工信息
+const addDataUrl = 'http://192.168.17.15:8360/index/addtable'
+const getDataUrl = 'http://192.168.17.15:8360/index/gettable'
+const editDataUrl = 'http://192.168.17.15:8360/index/edittable'
+const deleteDataUrl = 'http://192.168.17.15:8360/index/deletetable'
 const tableType = 'staff'
 export default {
   computed: {

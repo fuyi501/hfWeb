@@ -142,8 +142,8 @@
 <script>
 import axios from 'axios'
 import Vue from 'vue'
-const getDataUrl = 'http://192.168.9.15:8360/area/areainfo'
-const editDataUrl = 'http://192.168.9.15:8360/area/editareainfo'
+const getDataUrl = 'http://192.168.17.15:8360/area/areainfo'
+const editDataUrl = 'http://192.168.17.15:8360/area/editareainfo'
 export default {
   data () {
     return {
