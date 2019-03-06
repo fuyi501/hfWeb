@@ -138,8 +138,8 @@ const categoryType = {
   "road": "周界入侵检测"
 }
 
-const searchEventInfoUrl = 'http://192.168.17.15:8360/event/search' // 查询员工信息
-const getAudioInfo = 'http://192.168.17.15:8360/audio/getaudio'
+const searchEventInfoUrl = 'http://192.168.2.254:8360/event/search' // 查询员工信息
+const getAudioInfo = 'http://192.168.2.254:8360/audio/getaudio'
 
 export default {
   components: {

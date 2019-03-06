@@ -98,8 +98,8 @@ import axios from 'axios'
 // window.videojs = videojs
 // require('video.js/dist/video-js.css')
 // require('vue-video-player/src/custom-theme.css')
-const uploadImgUrl = 'http://192.168.17.15:8360/index/imgall'
-const updateFaceUrl = 'http://192.168.17.15:8360/index/updateface'
+const uploadImgUrl = 'http://192.168.2.254:8360/index/imgall'
+const updateFaceUrl = 'http://192.168.2.254:8360/index/updateface'
 export default {
   data () {
     return {

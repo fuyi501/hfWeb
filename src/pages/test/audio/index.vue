@@ -56,11 +56,11 @@ import axios from 'axios'
 import dayjs from 'dayjs'
 import Vue from 'vue'
 var schedule = require('node-schedule')
-const getAudioInfo = 'http://192.168.17.15:8360/audio/getaudio'
-const intervalGetInfo = 'http://192.168.17.15:8360/audio/intervalget'
-const editDataUrl = 'http://192.168.17.15:8360/audio/editaudio'
-const openCloseAllUrl = 'http://192.168.17.15:8360/audio/opencloseall'
-const getAudio = 'http://192.168.17.15:8360/audio/playaudio'
+const getAudioInfo = 'http://192.168.2.254:8360/audio/getaudio'
+const intervalGetInfo = 'http://192.168.2.254:8360/audio/intervalget'
+const editDataUrl = 'http://192.168.2.254:8360/audio/editaudio'
+const openCloseAllUrl = 'http://192.168.2.254:8360/audio/opencloseall'
+const getAudio = 'http://192.168.2.254:8360/audio/playaudio'
 export default {
   components: {
     Aplayer

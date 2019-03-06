@@ -40,7 +40,7 @@
 <script>
 import axios from 'axios'
 import dayjs from 'dayjs'
-const uploadTableUrl = 'http://192.168.17.15:8360/index/savetable'
+const uploadTableUrl = 'http://192.168.2.254:8360/index/savetable'
 
 export default {
   data () {

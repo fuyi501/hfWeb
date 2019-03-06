@@ -29,7 +29,7 @@ const setting = {
   releases: {
     version: version,
     // api: 'https://api.github.com/repos/FairyEver/d2-admin/releases/latest'
-    api: 'http://192.168.17.15:8360'
+    api: 'http://192.168.2.254:8360'
   },
   // 菜单搜索
   search: {

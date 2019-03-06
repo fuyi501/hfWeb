@@ -39,7 +39,7 @@
 export default {
   data () {
     return {
-      uploadUrl: 'http://192.168.17.15:8360/index/saveimg',
+      uploadUrl: 'http://192.168.2.254:8360/index/saveimg',
       imageUrl: '',
       fileList2: [],
       userInfo: { uid: 12345 }

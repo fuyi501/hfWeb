@@ -22,10 +22,10 @@
 import MyTag from './MyTag'
 import MyTag2 from './MyTag2'
 import axios from 'axios'
-const addDataUrl = 'http://192.168.17.15:8360/audio/addaudio'
-const getDataUrl = 'http://192.168.17.15:8360/audio/getaudio'
-const editDataUrl = 'http://192.168.17.15:8360/audio/editaudio'
-const deleteDataUrl = 'http://192.168.17.15:8360/audio/deleteaudio'
+const addDataUrl = 'http://192.168.2.254:8360/audio/addaudio'
+const getDataUrl = 'http://192.168.2.254:8360/audio/getaudio'
+const editDataUrl = 'http://192.168.2.254:8360/audio/editaudio'
+const deleteDataUrl = 'http://192.168.2.254:8360/audio/deleteaudio'
 export default {
   components: {
     MyTag
