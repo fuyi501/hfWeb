@@ -232,7 +232,8 @@ export default {
           event: this.searchInfo.event,
           video: this.searchInfo.video,
           startTime: dayjs(this.searchInfo.time[0]).format('YYYY-MM-DD HH:mm:ss'),
-          endTime: dayjs(this.searchInfo.time[1]).format('YYYY-MM-DD HH:mm:ss')
+          endTime: dayjs(this.searchInfo.time[1]).format('YYYY-MM-DD HH:mm:ss'),
+          maxid: this.data[this.data.length - 1].eventId
         }
         axios.post(searchEventInfoUrl, {
           eventInfo: sendInfo
