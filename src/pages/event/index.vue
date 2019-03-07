@@ -53,9 +53,8 @@
           </el-form>
         </el-col>
       </el-row>
-      
-      
     </template>
+
     <d2-crud
       ref="d2Crud"
       v-loading="loading"

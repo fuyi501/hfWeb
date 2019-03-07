@@ -136,6 +136,7 @@ export default {
     },
     pause () {
       console.log('暂停')
+      
     },
     onMusicEnded () {
       console.log(this.$refs.Aplayer.currentMusic, '播放完了')
