@@ -58,6 +58,7 @@
     </template>
     <d2-crud
       ref="d2Crud"
+      v-loading="loading"
       :columns="columns"
       :data="data"
       :options="options"
@@ -126,7 +127,12 @@ const location = {
   "Area_A7_91": "原料小罐区1",
   "Area_A7_83": "盐酸小罐区主干道2",
   "Area_A7_92": "原料小罐区2",
-  "Area_A7_84": "水洗塔1"
+  "Area_A7_84": "水洗塔1",
+  "intrusion_xf_123": "办公室消防楼梯",
+  "intrusion_xf_125":"一车间消防楼梯",
+  "intrusion_xf_141":"二车间消防楼梯1",
+  "intrusion_xf_140":"二车间消防楼梯2",
+  "intrusion_xf_142":"二车间消防楼梯3"
 }
 
 const categoryType = {
@@ -188,7 +194,8 @@ export default {
       data: [],
       selectionRow: false,
       eventTitle: '异常事件',
-      deleteManyInfo: [] // 要批量删除的事件信息
+      deleteManyInfo: [], // 要批量删除的事件信息
+      loading: false
     }
   },
   created () {
@@ -238,7 +245,7 @@ export default {
           endTime: dayjs(this.searchInfo.time[1]).format('YYYY-MM-DD HH:mm:ss')
         }
         this.eventTitle = categoryType[sendInfo.event] + '_' + location[sendInfo.video] + '_' + sendInfo.startTime + '_' + sendInfo.endTime
-
+        this.loading = true
         axios.post(searchEventInfoUrl, {
           eventInfo: sendInfo
         })
@@ -261,11 +268,13 @@ export default {
                     }
                   })
                 }
+                this.loading = false
                 this.$notify({
                   title: '获取成功',
                   type: 'success'
                 })
               } else {
+                this.loading = false
                 this.eventTitle = '异常事件'
                 this.$notify({
                   title: '没有数据',
@@ -274,6 +283,7 @@ export default {
               }
               
             } else {
+              this.loading = false
               this.$notify.error({
                 title: '获取失败',
                 message: res.data.errmsg
@@ -281,6 +291,7 @@ export default {
             }
           })
           .catch((err) => {
+            this.loading = false
             console.log(err)
           })
       }
