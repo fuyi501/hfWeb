@@ -196,7 +196,8 @@ export default {
       eventTitle: '异常事件',
       deleteManyInfo: [], // 要批量删除的事件信息
       loading: false,
-      selectWrap: ''
+      selectWrap: '',
+      isScroll: true
     }
   },
   created () {
@@ -205,7 +206,6 @@ export default {
   mounted () {
     console.log('报警事件查询 mounted')
 
-  
     setTimeout(()=>{
       this.selectWrap = document.querySelector('.d2-container-full__body')
       console.log('this.selectWrap元素', this.selectWrap)
@@ -222,62 +222,62 @@ export default {
       let sign = 200
       let scrollDistance = this.selectWrap.scrollHeight - this.selectWrap.scrollTop - this.selectWrap.clientHeight
       console.log('scrollDistance', scrollDistance)
-      if(scrollDistance < 200){
-        // for(let i=0;i<4;i++){
-        //   this.data.push(
-        //     {eventPicture: "事件", eventInfo: { text: '张大有' + Math.random()}}
-        //   )
-        // }
-        let sendInfo = {
-          event: this.searchInfo.event,
-          video: this.searchInfo.video,
-          startTime: dayjs(this.searchInfo.time[0]).format('YYYY-MM-DD HH:mm:ss'),
-          endTime: dayjs(this.searchInfo.time[1]).format('YYYY-MM-DD HH:mm:ss'),
-          maxid: this.data[this.data.length - 1].eventId
-        }
-        axios.post(searchEventInfoUrl, {
-          eventInfo: sendInfo
-        })
-          .then((res) => {
-            console.log('异常事件结果：', res)
-            if (res.data.errno === 0) {
-              if (res.data.data.length > 0) {
-                for (let i in res.data.data) {
-                  this.data.push({
-                    eventId: res.data.data[i].id,
-                    eventPicture: res.data.data[i].big_picture,
-                    eventInfo: {
-                      id: res.data.data[i].id,
-                      category: res.data.data[i].category,
-                      channel_name: res.data.data[i].channel_name,
-                      text: res.data.data[i].text,
-                      datetime: res.data.data[i].datetime,
-                      status: res.data.data[i].status,
-                    }
+      if(scrollDistance < 1000){
+        if (this.isScroll) {
+          this.isScroll = false
+          let sendInfo = {
+            event: this.searchInfo.event,
+            video: this.searchInfo.video,
+            startTime: dayjs(this.searchInfo.time[0]).format('YYYY-MM-DD HH:mm:ss'),
+            endTime: dayjs(this.searchInfo.time[1]).format('YYYY-MM-DD HH:mm:ss'),
+            maxid: this.data[this.data.length - 1].eventId
+          }
+          axios.post(searchEventInfoUrl, {
+            eventInfo: sendInfo
+          })
+            .then((res) => {
+              console.log('异常事件结果：', res)
+              if (res.data.errno === 0) {
+                if (res.data.data.length > 0) {
+                  for (let i in res.data.data) {
+                    this.data.push({
+                      eventId: res.data.data[i].id,
+                      eventPicture: res.data.data[i].big_picture,
+                      eventInfo: {
+                        id: res.data.data[i].id,
+                        category: res.data.data[i].category,
+                        channel_name: res.data.data[i].channel_name,
+                        text: res.data.data[i].text,
+                        datetime: res.data.data[i].datetime,
+                        status: res.data.data[i].status,
+                      }
+                    })
+                  }
+                  setTimeout(() => {
+                    this.isScroll = true
+                  }, 2000)
+                  this.$notify({
+                    title: '获取成功',
+                    type: 'success'
+                  })
+                } else {
+                  this.$notify({
+                    title: '没有数据',
+                    type: 'success'
                   })
                 }
-                this.$notify({
-                  title: '获取成功',
-                  type: 'success'
-                })
+                
               } else {
-                this.$notify({
-                  title: '没有数据',
-                  type: 'success'
+                this.$notify.error({
+                  title: '获取失败',
+                  message: res.data.errmsg
                 })
               }
-              
-            } else {
-              this.$notify.error({
-                title: '获取失败',
-                message: res.data.errmsg
-              })
-            }
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-
+            })
+            .catch((err) => {
+              console.log(err)
+            })
+          }
       }
     },
     // 获取报警信息，首先获取到用户报警的设置数据，再根据设置获取音频信息

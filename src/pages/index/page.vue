@@ -1,6 +1,5 @@
 <template>
   <d2-container class="page">
-    
     <!-- <el-row :gutter="20">
       <el-col :span="4">
         <el-card :body-style="{ padding: '0px' }" style="height:120px;">
@@ -81,7 +80,6 @@
         </el-card>
       </el-col>
     </el-row> -->
-
     <el-row :gutter="20" style="height:460px;margin-bottom:60px;" >
       <el-col :span="8">
         <el-card style="">
@@ -124,7 +122,6 @@
         </el-card>
       </el-col>
     </el-row>
-
     <!-- <el-row :gutter="20" style="height:460px;margin-top:20px;">
       <el-col :span="8">
         <el-card style="height:460px;">
@@ -145,7 +142,6 @@
         </el-card>
       </el-col>
     </el-row> -->
-
   </d2-container>
 </template>
 
