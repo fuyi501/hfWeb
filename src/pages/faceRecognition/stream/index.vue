@@ -165,7 +165,7 @@ export default {
       var videoElement = document.getElementById('videoElement');
       var flvPlayer = flvjs.createPlayer({
           type: 'flv',
-          url: 'http://192.168.9.12:8080/live?app=live&stream=stream'
+          url: 'http://192.168.2.254:8080/live?app=live&stream=stream'
       });
       flvPlayer.attachMediaElement(videoElement);
       flvPlayer.load();
