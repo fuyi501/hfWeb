@@ -12,6 +12,7 @@ module.exports = {
   baseUrl: baseUrl, // 根据你的实际情况更改这里
   lintOnSave: true,
   devServer: {
+    disableHostCheck: true,
     publicPath: baseUrl // 和 baseUrl 保持一致
   },
   // webpack 设置

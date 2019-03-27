@@ -104,6 +104,16 @@
       <el-col :span="16">
         <el-card style="">
           <div slot="header" class="clearfix">
+            <span>新增员工</span>
+          </div>
+           <ve-histogram :data="chartData" :settings="chartSettings" :colors="colors"></ve-histogram>
+        </el-card>
+      </el-col>
+    </el-row>
+    <el-row :gutter="20" style="height:460px;margin-top:20px;">
+      <el-col :span="24">
+        <el-card style="height:460px;">
+          <div slot="header" class="clearfix">
             <span>事件统计</span>
             <el-select style="float: right;" 
               @change="getEventChartsData"
@@ -118,30 +128,10 @@
               </el-option>
             </el-select>
           </div>
-          <ve-line :data="eventTypeChartsData" :settings="eventTypeChartsSetting" :loading="eventChartsLoading"></ve-line>
+          <ve-line :data="eventTypeChartsData" :settings="eventTypeChartsSetting"></ve-line>
         </el-card>
       </el-col>
     </el-row>
-    <!-- <el-row :gutter="20" style="height:460px;margin-top:20px;">
-      <el-col :span="8">
-        <el-card style="height:460px;">
-          <div slot="header" class="clearfix">
-            <span>饼图</span>
-            <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
-          </div>
-          <ve-pie :data="staffchartsData"></ve-pie>
-        </el-card>
-      </el-col>
-      <el-col :span="16">
-        <el-card style="height:460px;">
-          <div slot="header" class="clearfix">
-            <span>饼图</span>
-              <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
-            </div> 
-            <ve-line :data="eventTypeChartsData" :settings="eventTypeChartsSetting"></ve-line>
-        </el-card>
-      </el-col>
-    </el-row> -->
   </d2-container>
 </template>
 
@@ -155,11 +145,14 @@ export default {
   components: {
   },
   data () {
-    this.colors = ['#ff7a45','#40a9ff'],
+    this.colors = ['#40a9ff','#ff7a45'],
     this.eventTypeChartsSetting = {
       axisSite: { right: ['异常率'] },
       yAxisType: ['normal', 'percent'],
       yAxisName: ['数值', '比率']
+    }
+    this.chartSettings = {
+      // showLine: ['下单用户']
     }
     return {
       eventOptions: [
@@ -199,8 +192,19 @@ export default {
       staffchartsData: {
         columns: ['员工类型', '员工数量'],
         rows: [
-          { '员工类型': '正式工', '员工数量': 1393 },
-          { '员工类型': '临时工', '员工数量': 3530 }
+          { '员工类型': '正式工', '员工数量': 168 },
+          { '员工类型': '临时工', '员工数量': 57 }
+        ]
+      },
+      chartData: {
+        columns: ['日期', '新增员工'],
+        rows: [
+          { '日期': '3/17', '新增员工': 5 },
+          { '日期': '3/18', '新增员工': 1 },
+          { '日期': '3/19', '新增员工': 2 },
+          { '日期': '3/20', '新增员工': 3 },
+          { '日期': '3/21', '新增员工': 1 },
+          { '日期': '3/22', '新增员工': 2 }
         ]
       }
     }
@@ -212,14 +216,14 @@ export default {
     this.searchTimeList = timeList.slice(0, nowTime-6)
     console.log(this.searchTimeList)
     this.getEventChartsData()
-    // let i = 12
-    // var intervalEvent = scheduleEvent.scheduleJob('*/100 * * * * *', ()=>{
+    // var intervalEvent = scheduleEvent.scheduleJob('*/60 * * * * *', ()=>{
     //   console.log('每5秒执行一次!')
-    //   this.eventTypeChartsData.rows[i+1]['异常事件'] = Math.random()*3000
-    //   this.eventTypeChartsData.rows[i+1]['正常事件'] = Math.random()*3000
-    //   this.eventTypeChartsData.rows[i+1]['异常率'] = Math.random()
-    //   this.eventTypeChartsData.rows.push({ '日期': i + ':00', '异常事件': Math.random()*3000, '正常事件': Math.random()*3000, '异常率': Math.random() },)
-    //   i += 1
+    //   if (dayjs().minute()%5 === 0){
+    //     if(this.eventTypeChartsData.length > 20){
+    //       this.eventTypeChartsData.rows.shift()
+    //     }
+    //     this.eventTypeChartsData.rows.push({ '时间': dayjs().hour() + ':' + dayjs().minute(), '异常事件': Math.random()*3000, '正常事件': Math.random()*3000, '异常率': Math.random() },)
+    //   }
     // })
     // // 通过$once来监听定时器，在beforeDestroy钩子可以被清除。
     // this.$once('hook:beforeDestroy', () => {    

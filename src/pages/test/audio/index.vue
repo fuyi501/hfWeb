@@ -8,7 +8,6 @@
             <el-col ><div class="settingFont">报警设置</div></el-col>
             <el-col ><el-button type="primary" size="mini" @click="openAll">全部开启</el-button></el-col>
             <el-col ><el-button type="danger" size="mini" @click="openClose">全部关闭</el-button></el-col>
-            <!-- <el-col ><el-button type="success" size="mini" @click="openClose">确认报警项</el-button></el-col> -->
           </el-row>
           <el-form
             ref="alarmData"

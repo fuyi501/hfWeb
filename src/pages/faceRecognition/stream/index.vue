@@ -123,6 +123,8 @@ const saveSmallPicUrl = 'http://192.168.2.254:8360/img/savesmallpic'
 const updateFaceUrl = 'http://192.168.2.254:8360/img/updateface'
 const getDataUrl = 'http://192.168.2.254:8360/img/getstaffinfo'
 
+const getStreamUrl = 'http://192.168.2.254:9000/index/getstream'
+
 export default {
   data () {
 		return {
@@ -161,23 +163,35 @@ export default {
 	},
 	mounted () {
 
-		if (flvjs.isSupported()) {
-      var videoElement = document.getElementById('videoElement');
-      var flvPlayer = flvjs.createPlayer({
-          type: 'flv',
-          url: 'http://192.168.2.254:8080/live?app=live&stream=stream'
-      });
-      flvPlayer.attachMediaElement(videoElement);
-      flvPlayer.load();
-      flvPlayer.play();
-    }
+		console.log('获取员工数据')
+		axios.get(getStreamUrl)
+			.then((res) => {
+				console.log(res)
+				if (res.data.errno === 1000) {
+					this.$alert('视频流接入错误，请检查是否已接入摄像头', '提示', {
+						confirmButtonText: '确定',
+						type: 'warning'
+					})
+				} else {
+					if (flvjs.isSupported()) {
+						var videoElement = document.getElementById('videoElement');
+						var flvPlayer = flvjs.createPlayer({
+								type: 'flv',
+								url: 'http://192.168.9.12:8080/live?app=live&stream=stream'
+						});
+						flvPlayer.attachMediaElement(videoElement);
+						flvPlayer.load();
+						flvPlayer.play();
+					}
 
-		this.getStaffData()
-		this.videoTag = document.getElementsByTagName('video')
-		console.log(this.videoTag)
-		this.canvas = document.getElementById('canvas')
-		console.log('this.canvas:', this.canvas)
-		this.context = this.canvas.getContext('2d')
+					this.getStaffData()
+					this.videoTag = document.getElementsByTagName('video')
+					console.log(this.videoTag)
+					this.canvas = document.getElementById('canvas')
+					console.log('this.canvas:', this.canvas)
+					this.context = this.canvas.getContext('2d')
+				}
+			})
 	},
 	methods: {
 	getStaffData () {

@@ -51,6 +51,9 @@
             <el-form-item>
               <el-button @click="exportExcel" type="danger"><d2-icon name="upload"/> 导出pdf</el-button>
             </el-form-item>
+            <!-- <el-form-item>
+              <el-button @click="exportWord" type="danger"><d2-icon name="upload"/> 导出为word</el-button>
+            </el-form-item> -->
           </el-form>
         </el-col>
       </el-row>
@@ -78,6 +81,7 @@ import dayjs from 'dayjs'
 import html2Canvas from 'html2canvas'
 import domtoimage from 'dom-to-image'
 import JsPDF from 'jspdf'
+import htmldocx from 'html-docx-js'
 import Vue from 'vue'
 
 import MyImg from './MyImg'
@@ -221,8 +225,8 @@ export default {
     handleScroll () {
       let sign = 200
       let scrollDistance = this.selectWrap.scrollHeight - this.selectWrap.scrollTop - this.selectWrap.clientHeight
-      console.log('scrollDistance', scrollDistance)
-      if(scrollDistance < 1000){
+      console.log('scrollDistance', this.selectWrap.scrollHeight, this.selectWrap.scrollTop, this.selectWrap.clientHeight, scrollDistance)
+      if(scrollDistance < 2000){
         if (this.isScroll) {
           this.isScroll = false
           let sendInfo = {
@@ -313,6 +317,8 @@ export default {
           type: 'warning'
         })
       } else {
+        this.selectWrap.scrollTop = this.selectWrap.scrollTop ? 0 : ''
+
         let sendInfo = {
           event: this.searchInfo.event,
           video: this.searchInfo.video,
@@ -415,7 +421,20 @@ export default {
       if (this.data.length > 0) {
         this.getPdf()
       } else {
-        this.$message.error('请先查询数据')
+        this.$message.error('没有数据可以导出')
+      }
+    },
+    exportWord () {
+      console.log('导出为word')
+      if (this.data.length > 0) {
+        var htmlDom = document.querySelector('.d2-container-full__body')
+        console.log('this.htmlDom:', htmlDom)
+        var converted = htmldocx.asBlob(htmlDom, {orientation: 'landscape', margins: {top: 720}})
+        console.log('converted:', converted)
+
+        saveAs(converted, 'test.docx')
+      } else {
+        this.$message.error('没有数据可以导出')
       }
     },
     //将特定部分转成pdf并下载
