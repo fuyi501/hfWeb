@@ -72,6 +72,11 @@
       @row-click="handleRowClick"
       @selection-change="handleSelectionChange">
     </d2-crud>
+
+    <el-row type="flex" justify="center">
+      <el-button @click="loadingMoreInfo" type="text" v-if="loadingMore" style="width: 100%; font-size: 16px;"><d2-icon name="download"/> 点击加载更多 </el-button>
+      <p v-else> 没有更多数据了！ </p>
+    </el-row>
   </d2-container>
 </template>
 
@@ -201,7 +206,8 @@ export default {
       deleteManyInfo: [], // 要批量删除的事件信息
       loading: false,
       selectWrap: '',
-      isScroll: true
+      isScroll: true,
+      loadingMore: false
     }
   },
   created () {
@@ -210,18 +216,73 @@ export default {
   mounted () {
     console.log('报警事件查询 mounted')
 
-    setTimeout(()=>{
-      this.selectWrap = document.querySelector('.d2-container-full__body')
-      console.log('this.selectWrap元素', this.selectWrap)
-      this.selectWrap.addEventListener('scroll', this.handleScroll, true)
-    }, 2000)
+    // setTimeout(()=>{
+    //   this.selectWrap = document.querySelector('.d2-container-full__body')
+    //   console.log('this.selectWrap元素', this.selectWrap)
+    //   this.selectWrap.addEventListener('scroll', this.handleScroll, true)
+    // }, 2000)
 
   },
-  destroyed: function () {
-    console.log('离开页面, 清楚滚动事件')
-    this.selectWrap.removeEventListener('scroll', this.handleScroll)   //  离开页面清除（移除）滚轮滚动事件
-  },
+  // destroyed: function () {
+  //   console.log('离开页面, 清楚滚动事件')
+  //   this.selectWrap.removeEventListener('scroll', this.handleScroll)   //  离开页面清除（移除）滚轮滚动事件
+  // },
   methods: {
+    loadingMoreInfo () {
+      this.loading = true
+      let sendInfo = {
+        event: this.searchInfo.event,
+        video: this.searchInfo.video,
+        startTime: dayjs(this.searchInfo.time[0]).format('YYYY-MM-DD HH:mm:ss'),
+        endTime: dayjs(this.searchInfo.time[1]).format('YYYY-MM-DD HH:mm:ss'),
+        maxid: this.data[this.data.length - 1].eventId
+      }
+      axios.post(searchEventInfoUrl, {
+        eventInfo: sendInfo
+      })
+        .then((res) => {
+          console.log('异常事件结果：', res)
+          if (res.data.errno === 0) {
+            if (res.data.data.length > 0) {
+              for (let i in res.data.data) {
+                this.data.push({
+                  eventId: res.data.data[i].id,
+                  eventPicture: res.data.data[i].big_picture,
+                  eventInfo: {
+                    id: res.data.data[i].id,
+                    category: res.data.data[i].category,
+                    channel_name: res.data.data[i].channel_name,
+                    text: res.data.data[i].text,
+                    datetime: res.data.data[i].datetime,
+                    status: res.data.data[i].status,
+                  }
+                })
+              }
+              this.loading = false
+              this.$notify({
+                title: '获取成功',
+                type: 'success'
+              })
+            } else {
+              this.loadingMore = false
+              this.loading = false
+              this.$notify({
+                title: '没有数据',
+                type: 'success'
+              })
+            }
+            
+          } else {
+            this.$notify.error({
+              title: '获取失败',
+              message: res.data.errmsg
+            })
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
     handleScroll () {
       let sign = 200
       let scrollDistance = this.selectWrap.scrollHeight - this.selectWrap.scrollTop - this.selectWrap.clientHeight
@@ -229,58 +290,7 @@ export default {
       if(scrollDistance < 2000){
         if (this.isScroll) {
           this.isScroll = false
-          let sendInfo = {
-            event: this.searchInfo.event,
-            video: this.searchInfo.video,
-            startTime: dayjs(this.searchInfo.time[0]).format('YYYY-MM-DD HH:mm:ss'),
-            endTime: dayjs(this.searchInfo.time[1]).format('YYYY-MM-DD HH:mm:ss'),
-            maxid: this.data[this.data.length - 1].eventId
-          }
-          axios.post(searchEventInfoUrl, {
-            eventInfo: sendInfo
-          })
-            .then((res) => {
-              console.log('异常事件结果：', res)
-              if (res.data.errno === 0) {
-                if (res.data.data.length > 0) {
-                  for (let i in res.data.data) {
-                    this.data.push({
-                      eventId: res.data.data[i].id,
-                      eventPicture: res.data.data[i].big_picture,
-                      eventInfo: {
-                        id: res.data.data[i].id,
-                        category: res.data.data[i].category,
-                        channel_name: res.data.data[i].channel_name,
-                        text: res.data.data[i].text,
-                        datetime: res.data.data[i].datetime,
-                        status: res.data.data[i].status,
-                      }
-                    })
-                  }
-                  setTimeout(() => {
-                    this.isScroll = true
-                  }, 2000)
-                  this.$notify({
-                    title: '获取成功',
-                    type: 'success'
-                  })
-                } else {
-                  this.$notify({
-                    title: '没有数据',
-                    type: 'success'
-                  })
-                }
-                
-              } else {
-                this.$notify.error({
-                  title: '获取失败',
-                  message: res.data.errmsg
-                })
-              }
-            })
-            .catch((err) => {
-              console.log(err)
-            })
+          
           }
       }
     },
@@ -317,7 +327,7 @@ export default {
           type: 'warning'
         })
       } else {
-        this.selectWrap.scrollTop = this.selectWrap.scrollTop ? 0 : ''
+        // this.selectWrap.scrollTop = this.selectWrap.scrollTop ? 0 : ''
 
         let sendInfo = {
           event: this.searchInfo.event,
@@ -333,8 +343,9 @@ export default {
           .then((res) => {
             console.log('异常事件结果：', res)
             if (res.data.errno === 0) {
+              this.data = []
               if (res.data.data.length > 0) {
-                this.data = []
+                this.loadingMore = true
                 for (let i in res.data.data) {
                   this.data.push({
                     eventId: res.data.data[i].id,

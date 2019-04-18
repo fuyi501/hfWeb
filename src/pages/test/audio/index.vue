@@ -88,6 +88,8 @@ export default {
       evenTitle: '',
       maxid: 0, // 最大的id号
       tempIndex: 0, // 下标
+      isPause: '', // 是否处于暂停状态
+      isPlaying: false, // 是否处于播放状态
     }
   },
   computed: {      
@@ -105,9 +107,9 @@ export default {
     this.getAudioInfo() 
 
     setTimeout(()=>{
-      var intervalTask = schedule.scheduleJob('*/5 * * * * *', ()=>{
-        console.log('每5秒执行一次!')
-        if(this.list3.length < 100) {
+      var intervalTask = schedule.scheduleJob('*/1 * * * * *', ()=>{
+        console.log('每1秒执行一次!')
+        if(this.list3.length < 20) {
           this.intervalGet()
         }
       })
@@ -123,7 +125,8 @@ export default {
   },
   methods: {
     paly () {
-      console.log('开始播放,当前音乐：', this.$refs.Aplayer.currentMusic)
+      this.isPause = false
+      console.log('开始播放,当前音乐：', this.isPause, this.$refs.Aplayer.currentMusic)
       let info = this.$refs.Aplayer.currentMusic
       for (let item of this.bigImgInfo) {
         if (item.small_picture === info.pic) {
@@ -134,7 +137,8 @@ export default {
       }
     },
     pause () {
-      console.log('暂停')
+      this.isPause = true
+      console.log('暂停', this.isPause)
       
     },
     onMusicEnded () {
@@ -142,9 +146,9 @@ export default {
 
       this.tempIndex += 1
       // 每播放10条清空下前10条数据，重启播放组件
-      if(this.tempIndex === 10) {
-        this.list3.splice(0, 10)
-        this.bigImgInfo.splice(0, 10)
+      if(this.tempIndex === 5) {
+        this.list3.splice(0, 5)
+        this.bigImgInfo.splice(0, 5)
         this.tempIndex = 0
         this.flag = false
         setTimeout(()=>{
@@ -418,6 +422,18 @@ export default {
 
               this.maxid = this.maxid + res.data.length
 
+              if(this.list3.length > 0 && this.isPause) {
+                console.log('现在处于暂停状态：', this.isPause)
+                // this.list3.splice(0, this.list3.length)
+                // this.bigImgInfo.splice(0, this.list3.length)
+                // this.tempIndex = 0
+                this.flag = false
+                setTimeout(()=>{
+                  this.flag = true
+                }, 200)
+                
+              }
+
               this.$notify({
                 title: '获取 ' + res.data.length + ' 条新的数据',
                 type: 'success'
@@ -463,6 +479,17 @@ export default {
               }
 
               this.maxid = res.data[res.data.length - 1].id
+
+              if(this.list3.length > 0 && this.isPause) {
+                console.log('现在处于暂停状态：', this.isPause)
+                // this.list3.splice(0, this.list3.length)
+                // this.bigImgInfo.splice(0, this.list3.length)
+                // this.tempIndex = 0
+                this.flag = false
+                setTimeout(()=>{
+                  this.flag = true
+                }, 200)
+              }
 
               this.$notify({
                 title: '获取成功',

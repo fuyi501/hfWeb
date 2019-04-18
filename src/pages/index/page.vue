@@ -80,7 +80,61 @@
         </el-card>
       </el-col>
     </el-row> -->
-    <el-row :gutter="20" style="height:460px;margin-bottom:60px;" >
+    <el-row :gutter="20" style="height:400px;margin-bottom:30px;" >
+      <el-col :span="16">
+        <el-row :gutter="20" type="flex" justify="start" style="height: 50%;">
+          <el-col :span="8">
+            <el-card style="">
+              <div slot="header" class="clearfix">
+                <span>今日总事件</span>
+              </div>
+              <span style="font-size: 64px; color: #409EFF;"> {{ mainInfo.allEvent }} </span> <span>件</span>
+            </el-card>
+          </el-col>
+          <el-col :span="8">
+            <el-card style="">
+              <div slot="header" class="clearfix">
+                <span>今日总异常事件</span>
+              </div>
+              <span style="font-size: 64px; color: #F56C6C;"> {{ mainInfo.ycEvent }} </span> <span>件</span>
+            </el-card>
+          </el-col>
+          <el-col :span="8">
+            <el-card style="">
+              <div slot="header" class="clearfix">
+                <span>今日总正常事件</span>
+              </div>
+              <span style="font-size: 64px; color: #67C23A;"> {{ mainInfo.zcEvent }} </span> <span>件</span>
+              <!-- <ve-histogram :data="newStaff" :settings="chartSettings" :colors="colors"></ve-histogram> -->
+            </el-card>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20" type="flex" justify="start" style="margin-top: 50px;">
+          <el-col :span="8">
+            <el-card style="">
+              <div slot="header" class="clearfix">
+                <span>总员工</span>
+              </div>
+              <span style="font-size: 64px; color: #409EFF;"> {{ mainInfo.allPerson }} </span> <span>人</span>
+            </el-card>
+          </el-col>
+          <el-col :span="8">
+            <el-card style="">
+              <div slot="header" class="clearfix">
+                <span>今日新增员工</span>
+              </div>
+              <span style="font-size: 64px; color: #67C23A;"> {{ mainInfo.newPerson }} </span> <span>人</span>
+            </el-card>
+          </el-col>
+          <el-col :span="8">
+            <!-- <el-card style="">
+              <div slot="header" class="clearfix">
+                <span>新增员工</span>
+              </div>
+            </el-card> -->
+          </el-col>
+        </el-row>
+      </el-col>
       <el-col :span="8">
         <el-card style="">
           <div slot="header" class="clearfix">
@@ -97,16 +151,10 @@
                   :value="item.value">
                 </el-option>
               </el-select> -->
-            </div>
-          <ve-pie :data="staffchartsData" :colors="colors"></ve-pie>
-        </el-card>
-      </el-col>
-      <el-col :span="16">
-        <el-card style="">
-          <div slot="header" class="clearfix">
-            <span>新增员工</span>
           </div>
-           <ve-histogram :data="chartData" :settings="chartSettings" :colors="colors"></ve-histogram>
+          <div style="height: 300px; ">
+            <ve-pie :data="staffchartsData" :colors="colors" :settings="chartSettings"></ve-pie>
+          </div>
         </el-card>
       </el-col>
     </el-row>
@@ -127,6 +175,13 @@
                 :value="item.value">
               </el-option>
             </el-select>
+            <el-date-picker style="float: right;" 
+              v-model="searchDate"
+              align="right"
+              size="mini"
+              type="date"
+              placeholder="选择日期">
+            </el-date-picker>
           </div>
           <ve-line :data="eventTypeChartsData" :settings="eventTypeChartsSetting"></ve-line>
         </el-card>
@@ -140,6 +195,7 @@ import { httpGet, httpPost } from '@/api/sys/http'
 import dayjs from 'dayjs'
 var scheduleEvent = require('node-schedule')
 const getEventTypeUrl = 'http://192.168.2.254:8360/charts/eventtype'
+const getMainInfoUrl = 'http://192.168.2.254:8360/charts/maininfo'
 const timeList = ['06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22']
 export default {
   components: {
@@ -152,7 +208,9 @@ export default {
       yAxisName: ['数值', '比率']
     }
     this.chartSettings = {
-      // showLine: ['下单用户']
+      radius: 100,
+      offsetY: 160,
+      height: 200
     }
     return {
       eventOptions: [
@@ -166,7 +224,7 @@ export default {
         event: 'all',
       },
       eventChartsLoading: false,
-      searchTimeList: '',
+      searchDate: '',
       eventTypeChartsData: {
         columns: ['日期', '异常事件', '正常事件', '异常率'],
         rows: [
@@ -182,11 +240,11 @@ export default {
           { '日期': '15:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
           { '日期': '16:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
           { '日期': '17:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
-          // { '日期': '18:00', '异常事件': '', '正常事件': '', '异常率': '' },
-          // { '日期': '19:00', '异常事件': '', '正常事件': '', '异常率': '' },
-          // { '日期': '20:00', '异常事件': '', '正常事件': '', '异常率': '' },
-          // { '日期': '21:00', '异常事件': '', '正常事件': '', '异常率': '' },
-          // { '日期': '22:00', '异常事件': '', '正常事件': '', '异常率': '' },
+          { '日期': '18:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
+          { '日期': '19:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
+          { '日期': '20:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
+          { '日期': '21:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
+          { '日期': '22:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
         ]
       },
       staffchartsData: {
@@ -196,7 +254,7 @@ export default {
           { '员工类型': '临时工', '员工数量': 57 }
         ]
       },
-      chartData: {
+      newStaff: {
         columns: ['日期', '新增员工'],
         rows: [
           { '日期': '3/17', '新增员工': 5 },
@@ -206,45 +264,86 @@ export default {
           { '日期': '3/21', '新增员工': 1 },
           { '日期': '3/22', '新增员工': 2 }
         ]
-      }
+      },
+      mainInfo: {
+        allEvent: 0, // 总事件
+        ycEvent: 0, // 异常事件
+        zcEvent: 0, // 正常事件
+        allPerson: 0, // 总人数
+        newPerson: 0 // 新增人数
+      },
+      defaultData: [
+        { '日期': '06:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
+        { '日期': '07:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
+        { '日期': '08:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
+        { '日期': '09:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
+        { '日期': '10:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
+        { '日期': '11:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
+        { '日期': '12:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
+        { '日期': '13:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
+        { '日期': '14:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
+        { '日期': '15:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
+        { '日期': '16:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
+        { '日期': '17:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
+        { '日期': '18:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
+        { '日期': '19:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
+        { '日期': '20:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
+        { '日期': '21:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
+        { '日期': '22:00', '异常事件': 0, '正常事件': 0, '异常率': 0 },
+      ]
     }
+  },
+  created () {
+    console.log('created')
+    this.searchDate = dayjs().format('YYYY-MM-DD')
+    console.log(this.searchDate)
+    this.getMainInfoData()
+    this.getEventChartsData()
   },
   mounted () {
     console.log('首页')
-    let nowTime = dayjs().hour()
-    console.log('nowTime:', nowTime)
-    this.searchTimeList = timeList.slice(0, nowTime-6)
-    console.log(this.searchTimeList)
-    this.getEventChartsData()
-    // var intervalEvent = scheduleEvent.scheduleJob('*/60 * * * * *', ()=>{
-    //   console.log('每5秒执行一次!')
-    //   if (dayjs().minute()%5 === 0){
-    //     if(this.eventTypeChartsData.length > 20){
-    //       this.eventTypeChartsData.rows.shift()
-    //     }
-    //     this.eventTypeChartsData.rows.push({ '时间': dayjs().hour() + ':' + dayjs().minute(), '异常事件': Math.random()*3000, '正常事件': Math.random()*3000, '异常率': Math.random() },)
-    //   }
-    // })
-    // // 通过$once来监听定时器，在beforeDestroy钩子可以被清除。
-    // this.$once('hook:beforeDestroy', () => {    
-    //   console.log('销毁定时器')        
-    //   intervalEvent.cancel()                               
-    // })
+    // this.searchDate = dayjs().format('YYYY-MM-DD')
+    // console.log(this.searchDate)
+    
+    // this.getEventChartsData()
+
+    var intervalEvent = scheduleEvent.scheduleJob('*/60 * * * * *', ()=>{
+      console.log('每1min执行一次!')
+      this.getMainInfoData()
+      // this.getEventChartsData()
+    })
+    // 通过$once来监听定时器，在beforeDestroy钩子可以被清除。
+    this.$once('hook:beforeDestroy', () => {    
+      console.log('销毁定时器')        
+      intervalEvent.cancel()                               
+    })
     
   },
   methods: {
     getEventChartsData () {
       console.log('this.chartsTypeInfo.event:', this.chartsTypeInfo.event)
       httpGet(getEventTypeUrl, {
-        eventTime: this.searchTimeList.join(','),
+        eventTime: this.searchDate,
         eventType: this.chartsTypeInfo.event
       }).then(res => {
         console.log('首页结果res：', res)
-        this.eventTypeChartsData.rows = res.data.length ? res.data : []
+        this.eventTypeChartsData.rows = res.data.length ? res.data : this.defaultData
+        if (res.data.length === 0) {
+          this.$notify({
+            title: '成功',
+            message: '没有数据',
+            type: 'success'
+          })
+        }
       })
     },
-    getChartsData () {
-      
+    getMainInfoData () {
+      console.log('getMainInfoData:')
+      httpGet(getMainInfoUrl).then(res => {
+        console.log('首页结果res：', res)
+        this.mainInfo = res.data
+        
+      })
     }
 
   }

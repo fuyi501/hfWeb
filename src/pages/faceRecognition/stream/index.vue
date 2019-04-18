@@ -173,8 +173,9 @@ export default {
 						type: 'warning'
 					})
 				} else {
+
 					if (flvjs.isSupported()) {
-						var videoElement = document.getElementById('videoElement');
+						var videoElement = document.getElementById('videoElement')
 						var flvPlayer = flvjs.createPlayer({
 								type: 'flv',
 								url: 'http://192.168.2.254:8080/live?app=live&stream=stream'
@@ -191,6 +192,7 @@ export default {
 					console.log('this.canvas:', this.canvas)
 					this.context = this.canvas.getContext('2d')
 				}
+
 			})
 	},
 	methods: {
