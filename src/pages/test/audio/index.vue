@@ -104,13 +104,30 @@ export default {
   },
   mounted () {
     console.log('音频 mounted')
+
     this.getAudioInfo() 
 
     setTimeout(()=>{
       var intervalTask = schedule.scheduleJob('*/5 * * * * *', ()=>{
         console.log('每5秒执行一次!')
         if(this.list3.length < 20) {
+
           this.intervalGet()
+
+          // (new Promise(this.intervalGet))
+          //   .then(res => {
+          //     console.log('在这里', this.list3.length, this.isPause)
+          //     if(this.list3.length > 0 && this.isPause) {
+          //       console.log('现在处于暂停状态：', this.isPause)
+          //       // this.list3.splice(0, this.list3.length)
+          //       // this.bigImgInfo.splice(0, this.list3.length)
+          //       // this.tempIndex = 0
+          //       this.flag = false
+          //       setTimeout(()=>{
+          //         this.flag = true
+          //       }, 200)
+          //     }
+          //   })
         }
       })
       // 通过$once来监听定时器，在beforeDestroy钩子可以被清除。
@@ -128,11 +145,13 @@ export default {
       this.isPause = false
       console.log('开始播放,当前音乐：', this.isPause, this.$refs.Aplayer.currentMusic)
       let info = this.$refs.Aplayer.currentMusic
-      for (let item of this.bigImgInfo) {
-        if (item.small_picture === info.pic) {
-          // console.log('大图：', item)
-          this.bigpic = item.big_picture
-          this.evenTitle = item.title
+      if (info && this.bigImgInfo !== ''){
+        for (let item of this.bigImgInfo) {
+          if (item.small_picture === info.pic) {
+            // console.log('大图：', item)
+            this.bigpic = item.big_picture
+            this.evenTitle = item.title
+          }
         }
       }
     },
@@ -422,17 +441,17 @@ export default {
 
               this.maxid = this.maxid + res.data.length
 
-              if(this.list3.length > 0 && this.isPause) {
-                console.log('现在处于暂停状态：', this.isPause)
-                // this.list3.splice(0, this.list3.length)
-                // this.bigImgInfo.splice(0, this.list3.length)
-                // this.tempIndex = 0
-                this.flag = false
-                setTimeout(()=>{
-                  this.flag = true
-                }, 200)
+              // if(this.list3.length > 0 && this.isPause) {
+              //   console.log('现在处于暂停状态：', this.isPause)
+              //   // this.list3.splice(0, this.list3.length)
+              //   // this.bigImgInfo.splice(0, this.list3.length)
+              //   // this.tempIndex = 0
+              //   this.flag = false
+              //   setTimeout(()=>{
+              //     this.flag = true
+              //   }, 200)
                 
-              }
+              // }
 
               this.$notify({
                 title: '获取 ' + res.data.length + ' 条新的数据',
@@ -446,6 +465,20 @@ export default {
               //   message: res.data.errmsg
               // })
               console.log('2秒--没有数据')
+            }
+          })
+          .then(res2 => {
+            console.log('这里输出》》》》》》》》》》》》》》》》》》》》》》》》》》')
+            console.log('在这里', this.list3.length, this.isPause)
+            if(this.list3.length > 0 && this.isPause) {
+              console.log('现在处于暂停状态：', this.isPause)
+              // this.list3.splice(0, this.list3.length)
+              // this.bigImgInfo.splice(0, this.list3.length)
+              // this.tempIndex = 0
+              this.flag = false
+              setTimeout(()=>{
+                this.flag = true
+              }, 200)
             }
           })
           .catch(function (err) {
@@ -480,16 +513,16 @@ export default {
 
               this.maxid = res.data[res.data.length - 1].id
 
-              if(this.list3.length > 0 && this.isPause) {
-                console.log('现在处于暂停状态：', this.isPause)
-                // this.list3.splice(0, this.list3.length)
-                // this.bigImgInfo.splice(0, this.list3.length)
-                // this.tempIndex = 0
-                this.flag = false
-                setTimeout(()=>{
-                  this.flag = true
-                }, 200)
-              }
+              // if(this.list3.length > 0 && this.isPause) {
+              //   console.log('现在处于暂停状态：', this.isPause)
+              //   // this.list3.splice(0, this.list3.length)
+              //   // this.bigImgInfo.splice(0, this.list3.length)
+              //   // this.tempIndex = 0
+              //   this.flag = false
+              //   setTimeout(()=>{
+              //     this.flag = true
+              //   }, 200)
+              // }
 
               this.$notify({
                 title: '获取成功',
@@ -501,6 +534,20 @@ export default {
               // this.flag = true
             } else {
               console.log('this.list3为空，2秒查询--没有数据')
+            }
+          })
+          .then(res2 => {
+            console.log('这里输出》》》》》》》》》》》》》》》》》》》》》》》》》》')
+            console.log('在这里', this.list3.length, this.isPause)
+            if(this.list3.length > 0 && this.isPause) {
+              console.log('现在处于暂停状态：', this.isPause)
+              // this.list3.splice(0, this.list3.length)
+              // this.bigImgInfo.splice(0, this.list3.length)
+              // this.tempIndex = 0
+              this.flag = false
+              setTimeout(()=>{
+                this.flag = true
+              }, 200)
             }
           })
           .catch(function (err) {
