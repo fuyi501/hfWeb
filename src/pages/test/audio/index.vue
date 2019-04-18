@@ -107,8 +107,8 @@ export default {
     this.getAudioInfo() 
 
     setTimeout(()=>{
-      var intervalTask = schedule.scheduleJob('*/1 * * * * *', ()=>{
-        console.log('每1秒执行一次!')
+      var intervalTask = schedule.scheduleJob('*/5 * * * * *', ()=>{
+        console.log('每5秒执行一次!')
         if(this.list3.length < 20) {
           this.intervalGet()
         }
