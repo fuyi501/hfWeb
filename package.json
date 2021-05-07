@@ -32,7 +32,7 @@
     "particles.js": "^2.0.0",
     "screenfull": "^3.3.2",
     "style-loader": "^0.23.1",
-    "ua-parser-js": "^0.7.18",
+    "ua-parser-js": "^0.7.24",
     "v-charts": "^1.19.0",
     "vue": "^2.5.17",
     "vue-aplayer": "^1.6.1",
